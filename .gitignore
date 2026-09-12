@@ -1,0 +1,8 @@
+.DS_Store
+__pycache__/
+*.pyc
+/_site/
+/src/app.js
+/src/profile.js
+/tests/*-results.json
+/tests/verification.json
