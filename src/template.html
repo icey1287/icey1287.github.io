@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f4f4ee">
+  <meta name="description" content="张一铭 / icey — AI Agents、Generative Software Engineering 与 Learning by Building。一个可以用命令探索的个人主页。">
+  <meta name="referrer" content="no-referrer">
+  <title>icey / 张一铭 — a curious mind.</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232c3829'/%3E%3Cpath d='M17 20l12 12-12 12M35 44h14' fill='none' stroke='%23e0eccb' stroke-width='5'/%3E%3C/svg%3E">
+  <style>/*__XTERM_CSS__*/
+/*__STYLE__*/</style>
+  <script>try { const t=localStorage.getItem('icey-theme'); if(['light','dark','amber'].includes(t))document.documentElement.dataset.theme=t; } catch(e) {}</script>
+</head>
+<body>
+  <a href="#terminal" class="skip-link">跳到命令输入框</a>
+  <div class="workspace" id="workspace">
+    <header class="titlebar">
+      <div class="titlebar-left">
+        <button class="icon-button" id="toggle-sidebar" type="button" aria-label="切换文件目录" title="文件目录"><span data-icon="panel"></span></button>
+        <span class="brand"><span class="brand-mark">&gt;_</span><strong>icey</strong><span class="brand-sep">/</span><span class="brand-sub">a curious mind.</span></span>
+      </div>
+      <button class="palette-trigger" id="palette-trigger" type="button" aria-label="搜索主题设置"><span data-icon="search"></span><span>Search appearance / 主题</span><kbd>⌘ K</kbd></button>
+      <div class="titlebar-actions"><span class="top-monogram">small steps. curious mind.</span></div>
+    </header>
+    <div class="workbench">
+      <button class="sidebar-scrim" id="sidebar-scrim" type="button" aria-label="关闭文件目录" hidden></button>
+      <aside class="sidebar" id="sidebar" aria-label="文件资源管理器">
+        <div class="sidebar-heading"><span>EXPLORER</span><span class="sidebar-dots" aria-hidden="true">···</span></div>
+        <div class="root-folder"><span data-icon="chevron-down"></span><span data-icon="folder-open"></span><strong>ICEY / HOME</strong></div>
+        <nav id="file-nav" aria-label="个人主页文件">
+          <button class="file-item active" type="button" data-doc="about"><span class="file-glyph">M↓</span><span>about.md</span><i></i></button>
+          <button class="file-item" type="button" data-doc="life"><span class="file-glyph">M↓</span><span>life.md</span></button>
+          <button class="file-item empty-folder" type="button" data-doc="blog"><span data-icon="folder"></span><span>blog</span><small class="folder-count" id="blog-count">0</small></button>
+          <details class="nav-folder" data-folder="projects" open><summary><span class="folder-chevron">›</span><span data-icon="folder"></span><span>projects</span><small>/*__PROJECT_COUNT__*/</small></summary><div class="folder-children">
+/*__PROJECT_NAV__*/
+          </div></details>
+          <button class="file-item" type="button" data-doc="skills"><span class="file-glyph json">{ }</span><span>skills.json</span></button>
+        </nav>
+        <div class="sidebar-bottom"><div id="sidebar-cat" aria-hidden="true"></div><p>small steps,<br>interesting places.</p></div>
+      </aside>
+      <main class="main-panel" id="main-panel" aria-label="文档与 Shell">
+        <section class="document-pane" id="document-pane" aria-label="文件预览">
+          <div class="editor-tabs"><div class="document-tab"><span id="tab-glyph" class="file-glyph">M↓</span><span id="doc-tab-label">about.md</span><i class="tab-dot"></i></div><div class="editor-tools"><span id="doc-language">Markdown</span></div></div>
+          <div class="document-toolbar"><div class="breadcrumbs"><span>home</span><b>›</b><span>icey</span><b>›</b><span id="breadcrumb-file">about.md</span></div><div class="preview-switch" role="group" aria-label="文档显示方式"><button type="button" id="preview-button" aria-pressed="true">预览</button><button type="button" id="source-button" aria-pressed="false">源码</button></div></div>
+          <div class="document-scroll" id="document-scroll" tabindex="0" aria-label="文档滚动区域"><article class="markdown-body" id="doc-view"></article></div>
+        </section>
+        <div class="shell-resizer" id="shell-resizer" role="separator" tabindex="0" aria-label="调整下方 Shell 高度" aria-orientation="horizontal" aria-valuemin="160" aria-valuemax="600" aria-valuenow="260" title="拖动调整 Shell 高度 · 双击恢复默认"><span></span></div>
+        <section class="shell-panel" id="shell-panel" aria-label="集成 Web Shell">
+          <div class="shell-toolbar"><span class="shell-title"><span data-icon="terminal"></span>WEB SHELL</span><span class="shell-label">visitor@icey</span><span class="shell-state"><i class="status-dot" id="shell-status-dot"></i><span id="input-status">ready</span></span></div>
+          <div class="terminal-container" id="terminal-container"><div id="terminal" aria-label="交互终端"></div></div>
+          <div class="shell-hints"><span><kbd>Tab</kbd> 补全</span><span><kbd>↑ ↓</kbd> 历史</span><span><kbd>Ctrl R</kbd> 搜索</span><span class="hint-extra"><kbd>Ctrl L</kbd> 清屏</span><span class="hint-extra"><kbd>Ctrl C</kbd> 中断</span><span class="hint-end" id="terminal-size"></span></div>
+        </section>
+      </main>
+    </div>
+    <footer class="statusbar"><div><span class="status-branch"><span data-icon="branch"></span>main</span><span class="status-separator">/</span><span id="status-location">~/about.md</span></div><div><span>UTF-8</span><span class="status-desktop">·</span><span class="status-desktop">made of code &amp; curiosity</span></div></footer>
+  </div>
+  <dialog id="palette" class="palette-dialog" aria-label="主题设置"><div class="palette-search"><span data-icon="search"></span><input id="palette-search" placeholder="搜索主题：light / dark / amber…" aria-label="搜索主题设置"><button type="button" class="key-button" data-close="palette">Esc</button></div><div id="palette-results" role="listbox" aria-label="主题选项"></div><div class="palette-footer"><span>↑ ↓ 选择</span><span>↵ 打开</span><span>Appearance</span></div></dialog>
+  <dialog id="piano-dialog" class="piano-dialog" aria-labelledby="piano-title"><div class="dialog-top"><span class="overline">A DIFFERENT KIND OF KEYBOARD</span><button class="icon-button" type="button" data-close="piano-dialog" aria-label="关闭钢琴"><span data-icon="close"></span></button></div><div class="piano-content"><span class="piano-flower">✳</span><h2 id="piano-title">不写代码的时候，<br>也可以弹一点好心情。</h2><p>点击琴键，或按下 A S D F G H J K。<br>没有乐谱，随意一点就好。</p><div class="piano-keys" id="piano-keys"></div></div></dialog>
+  <div id="toast" role="status" aria-live="polite" hidden></div><div id="effect-layer" aria-hidden="true"></div>
+  <noscript><div class="noscript">张一铭 / Yiming Zhang · icey<br>AI &amp; Agents · Generative Software Engineering · Learning by Building</div></noscript>
+  <script>/*__MARKED__*/</script>
+  <script>/*__XTERM__*/</script>
+  <script>/*__PROFILE__*/</script>
+  <script>/*__SHELL__*/</script>
+  <script>/*__APP__*/</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "name": "张一铭",
+  "englishName": "Yiming Zhang",
+  "handle": "icey",
+  "username": "icey1287",
+  "projects": [
+    {
+      "slug": "supermew",
+      "name": "SuperMew",
+      "subtitle": "知识库优先的 Agent 平台：运行、检索、工具与评估"
+    },
+    {
+      "slug": "ourtomorrow",
+      "name": "OurTomorrow",
+      "subtitle": "以状态、位置与照片便笺记录日常的双人手账"
+    },
+    {
+      "slug": "foucs-rabbit",
+      "name": "Foucs-rabbit",
+      "subtitle": "专注计时 × 宠物养成 × 学习统计的微信小程序"
+    },
+    {
+      "slug": "cookmind",
+      "name": "CookMind",
+      "subtitle": "Decoder-only Transformer、预训练、微调与对齐实践"
+    },
+    {
+      "slug": "feynman-s-cat",
+      "name": "Feynman's Cat",
+      "subtitle": "用自己的话教会 AI 猫咪的费曼学习应用"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "Languages": [
+    "Python",
+    "C++",
+    "SQL",
+    "Golang",
+    "TypeScript"
+  ],
+  "Agent & ML": [
+    "LangChain",
+    "PyTorch",
+    "Agent Harness",
+    "Agentic RAG",
+    "ReAct",
+    "HITL",
+    "Evaluation"
+  ],
+  "Backend & Data": [
+    "FastAPI",
+    "PostgreSQL",
+    "Redis",
+    "Milvus",
+    "DuckDB"
+  ],
+  "Frontend & Delivery": [
+    "Vue",
+    "Docker",
+    "Git",
+    "Full-stack delivery"
+  ]
+}

@@ -1,0 +1,108 @@
+"""Real Chromium + bundled xterm + actual Blob worker integration tests.
+Content is injected via set_content because this runner blocks file/loopback navigation.
+"""
+from pathlib import Path
+import os
+import json, traceback
+from playwright.sync_api import sync_playwright
+R=Path(__file__).resolve().parents[1]
+results=[]; errors=[]; requests=[]
+def check(name, good, detail=''):
+    results.append({'name':name,'status':'pass' if good else 'fail', **({'detail':str(detail)} if not good else {})})
+    print(('PASS ' if good else 'FAIL ')+name+(' '+str(detail) if not good else ''),flush=True)
+with sync_playwright() as p:
+    browser=p.chromium.launch(executable_path=os.environ.get('CHROMIUM_EXECUTABLE','/usr/bin/chromium') or None,headless=True,args=['--no-sandbox'])
+    page=browser.new_page(viewport={'width':1440,'height':960},device_scale_factor=1)
+    page.set_default_timeout(10000)
+    page.on('pageerror',lambda e:errors.append(str(e)))
+    page.on('request',lambda r:requests.append(r.url))
+    def js(s): return page.evaluate(s)
+    def idle(job=True):
+        if job: js('async()=>{await ICEY_APP.terminal.queue;await ICEY_APP.terminal.job;await ICEY_APP.terminal.queue;}')
+        else: js('async()=>{await ICEY_APP.terminal.queue;}')
+    def state(): return js('({line:ICEY_APP.terminal.line,pos:ICEY_APP.terminal.pos,busy:ICEY_APP.busy,out:ICEY_APP.terminal.snapshot()})')
+    def cmd(s): return page.evaluate('(s)=>ICEY_APP.run(s)',s)
+    def focus(): js('ICEY_APP.terminal.focus(true)')
+    def key(s): page.keyboard.press(s);idle(False)
+    def text(s): page.keyboard.insert_text(s);idle(False)
+    def native(s):
+        focus();text(s);key('Enter');idle();return state()
+    def read(s): return page.evaluate('(s)=>ICEY_APP.shell.core.file(s)',s)
+    try:
+        page.set_content((R/'index.html').read_text(),wait_until='load')
+        page.wait_for_function('window.ICEY_APP');js('ICEY_APP.terminal.ready');page.wait_for_timeout(180)
+        check('Full viewport workspace',js('Math.abs(document.querySelector(".workspace").getBoundingClientRect().height-innerHeight)<2'))
+        check('No outer horizontal overflow',js('document.documentElement.scrollWidth===innerWidth'))
+        check('Exactly one native terminal',page.locator('.xterm').count()==1)
+        check('No old form/VM/theme button',page.locator('#command-form,#linux-dialog,#theme-toggle,#terminal-view').count()==0)
+        check('Real Worker available',js('!!ICEY_APP.shell.worker'))
+        check('Native cursor and direct-scroll options',js('ICEY_APP.terminal.term.options.cursorBlink&&ICEY_APP.terminal.term.options.cursorStyle==="block"&&ICEY_APP.terminal.term.options.smoothScrollDuration===0&&ICEY_APP.terminal.term.options.scrollback===5000'))
+        check('Desktop terminal 17px',js('ICEY_APP.terminal.term.options.fontSize===17'))
+        check('Removed virtual pages',js('!Object.keys(ICEY_APP.files).some(p=>/(resume|sources|links|now)[.](md|json)$/.test(p))'))
+        check('No duplicate clickable shell actions',page.locator('[data-run],.source-link,#eggs-status,.sidebar-section').count()==0)
+        check('GitHub profile link only in about.md',page.locator('a[href="https://github.com/icey1287"]').count()==1 and page.locator('.titlebar a').count()==0)
+        check('No public-facing editorial notes',js('!/(公开网页版本|内容来源与边界|不含手机号|不含.*证件照)/.test(Object.values(ICEY_APP.files).join(" "))'))
+        page.locator('[data-doc="life"]').click()
+        check('Markdown has real headings/lists',page.locator('#doc-view h2').count()>=2 and page.locator('#doc-view li').count()>=2)
+        page.locator('#source-button').click()
+        check('Source is same file',js('ICEY_APP.current.source===ICEY_APP.shell.core.file("/home/icey/life.md")'))
+        page.locator('#preview-button').click()
+        native('cat life.md')
+        check('cat prints Markdown in terminal only','# ' in state()['out'] and js('ICEY_APP.current.path.endsWith("life.md")'))
+        cmd('clear');native('echo terminal-ready')
+        check('Native keyboard command roundtrip','terminal-ready\nvisitor@icey:~$' in state()['out'])
+        check('Prompt ready immediately after command',not state()['busy'] and state()['line']=='' and page.locator('#input-status').inner_text() in ['ready','exit 0'])
+        check('Blinking native cursor exists after command',page.locator('.xterm-cursor').count()>=1 and js('ICEY_APP.terminal.term.options.cursorBlink'))
+        text('echo ac');key('ArrowLeft');text('b');key('Enter');idle()
+        check('Insert at actual cursor','\nabc\n' in state()['out'])
+        text('echo restore-me');key('Control+u');check('Ctrl U clears active line',state()['line']=='');key('Control+y');check('Ctrl Y restores kill buffer',state()['line']=='echo restore-me');key('Control+c')
+        check('Ctrl C cancels active edit',state()['line']=='' and page.locator('#input-status').inner_text()=='exit 130')
+        text('echo cursor');key('Control+a');check('Ctrl A start',state()['pos']==0);key('Control+e');check('Ctrl E end',state()['pos']==len('echo cursor'));key('Control+c')
+        native('echo history-needle');text('draft');key('ArrowUp');check('History previous',state()['line']=='echo history-needle');key('ArrowDown');check('History restores draft',state()['line']=='draft');key('Control+c')
+        key('Control+r');text('history-needle');check('Reverse history search',js('ICEY_APP.terminal.search.match==="echo history-needle"'));key('Enter');idle()
+        text('cat lif');key('Tab');check('Filename completion',state()['line']=='cat life.md ');key('Control+c')
+        text('e');key('Tab');check('Ambiguous completion shown inline',state()['line']=='e' and 'echo' in state()['out']);key('Control+c')
+        text('echo '+'x'*240);check('Long input wraps into multiple rows',js('ICEY_APP.terminal.lastModel.total>=3'));key('Enter');idle();check('Wrapped input executes',not state()['busy'] and ('x'*30) in state()['out'])
+        native('echo 你好，终端');check('CJK input/output', '你好，终端\n' in state()['out'])
+        text('echo 🌱');key('Backspace');check('Emoji-safe backspace',state()['line']=='echo ');key('Control+c')
+        text('echo "first');key('Enter');check('Unclosed quote uses continuation prompt',not state()['busy'] and state()['line'].endswith('\n') and '> ' in state()['out']);text('second"');key('Enter');idle();check('Multiline quoted command','first\nsecond\n' in state()['out'])
+        js("ICEY_APP.terminal.term.paste('echo paste-one\\necho paste-two')");idle(False)
+        check('Bracketed paste does not auto-execute',state()['line']=='echo paste-one\necho paste-two' and not state()['busy']);key('Enter');idle();check('Multiline paste executes on Enter','paste-one\npaste-two\n' in state()['out'])
+        native('echo hello > /tmp/in.txt');native('cat /tmp/in.txt | grep -n hello');check('File/pipe uses actual worker','1:hello\n' in state()['out'])
+        text('sleep 3');key('Enter');page.wait_for_timeout(100);check('Running job retains terminal/cursor',state()['busy'] and page.locator('#input-status').inner_text()=='running');key('Control+c');idle();check('Real worker interruption',not state()['busy'] and page.locator('#input-status').inner_text()=='exit 130');native('echo recovered');check('Worker restored after interruption','recovered\n' in state()['out'])
+        cmd('clear');js("()=>{void ICEY_APP.run('demo');}");page.wait_for_timeout(270)
+        check('ANSI progress updates a single line',sum('%' in l for l in state()['out'].splitlines())==1)
+        idle();check('ANSI progress ends cleanly',not state()['busy'] and '%' not in state()['out'])
+        js("()=>{void ICEY_APP.run('less life.md');}");page.wait_for_function('!!ICEY_APP.terminal.pager')
+        check('Pager uses alternate screen',js('ICEY_APP.terminal.term.buffer.active.type==="alternate"'));focus();key('Space');check('Pager page down',js('ICEY_APP.terminal.pager.top>0'));key('g');check('Pager top',js('ICEY_APP.terminal.pager.top===0'));key('/');text('Travel');key('Enter');check('Pager text search',js('!ICEY_APP.terminal.pager.searching'));key('q');idle();check('Pager restores scrollback & prompt',js('!ICEY_APP.terminal.pager&&ICEY_APP.terminal.term.buffer.active.type==="normal"') and not state()['busy'])
+        cmd('seq 1 200');focus();check('Real scrollback buffer',js('ICEY_APP.terminal.term.buffer.active.baseY>100'))
+        box=page.locator('#terminal').bounding_box();page.mouse.move(box['x']+box['width']/2,box['y']+70);page.mouse.wheel(0,-250);page.wait_for_timeout(250)
+        check('Native wheel scrolls output independently',js('ICEY_APP.terminal.term.buffer.active.viewportY<ICEY_APP.terminal.term.buffer.active.baseY'));key('Control+End');page.wait_for_timeout(180);check('Ctrl End reaches latest prompt',js('ICEY_APP.terminal.term.buffer.active.viewportY===ICEY_APP.terminal.term.buffer.active.baseY'))
+        page.locator('#palette-trigger').click();check('Palette only has three themes',page.locator('.palette-result').count()==3 and 'piano' not in page.locator('#palette').inner_text().lower());page.locator('#palette-search').fill('dark');page.keyboard.press('Enter')
+        check('Palette changes page and terminal theme',js('document.documentElement.dataset.theme==="dark"&&ICEY_APP.terminal.term.options.theme.background===getComputedStyle(document.documentElement).getPropertyValue("--shell").trim()'))
+        r=cmd('theme light');check('No duplicate shell theme command',r['code']==127 and js('document.documentElement.dataset.theme==="dark"'))
+        check('No direct piano entry',page.locator('button[data-run="piano"],button[data-command="piano"]').count()==0)
+        cmd('piano');check('Piano command opens instrument',page.locator('#piano-dialog').is_visible());page.locator('[data-close="piano-dialog"]').click();page.wait_for_timeout(80);check('Piano close returns terminal focus',js('document.activeElement===ICEY_APP.terminal.term.textarea'))
+        md='# Scratch\n\n**bold**\n\n| A | B |\n|---|---|\n| 1 | 2 |\n\n```js\nlet x = 1;\n```\n'
+        cmd("printf '"+md+"' > /tmp/scratch.md");cmd('preview /tmp/scratch.md')
+        check('New Markdown file uses actual renderer',page.locator('#doc-view table').count()==1 and page.locator('#doc-view pre code').count()==1 and page.locator('#doc-view strong').count()==1)
+        cmd("printf '<script>window.PWNED=true</script>\n\n[x](javascript:alert(1))' > /tmp/xss.md");cmd('preview /tmp/xss.md');check('Markdown script/link filtering',not js('!!window.PWNED') and page.locator('#doc-view a[href^="javascript:"]').count()==0)
+        focus();text('echo resize-preserved');page.set_viewport_size({'width':900,'height':760});page.wait_for_timeout(150);idle(False);check('Resize keeps active draft',state()['line']=='echo resize-preserved');page.set_viewport_size({'width':1440,'height':960});page.wait_for_timeout(180);key('Enter');idle();check('Resized draft still executes','resize-preserved\n' in state()['out'])
+        text('echo '+'z'*1600);check('Very long input bounded editor rows',js('ICEY_APP.terminal.lastModel.rows.length<ICEY_APP.terminal.term.rows'));key('Control+a');key('Control+e');key('Enter');idle();check('Very long input executes',not state()['busy'])
+        # Reset the document before independent layout checks.
+        js("ICEY_APP.openDoc('about')");cmd('clear')
+        for w,h in [(390,844),(375,667),(768,1024),(1280,640),(1920,1080)]:
+            page.set_viewport_size({'width':w,'height':h});page.wait_for_timeout(150);idle(False)
+            check(f'Layout {w}x{h}: no overflow',js('document.documentElement.scrollWidth===innerWidth&&document.documentElement.scrollHeight<=innerHeight+1'))
+            check(f'Layout {w}x{h}: usable terminal',js('ICEY_APP.terminal.term.cols>15&&ICEY_APP.terminal.term.rows>=3'))
+        page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(120);page.locator('#toggle-sidebar').click();page.locator('[data-doc="about"]').click();check('Mobile explorer opens document then closes',js('ICEY_APP.current.path.endsWith("about.md")&&!document.body.classList.contains("sidebar-open")'))
+        check('No runtime errors',not errors,errors)
+        check('No external network dependency',not any(x.startswith('https://') or x.startswith('http://') for x in requests),requests)
+    except Exception as e:
+        check('Test runner completed',False,traceback.format_exc())
+    finally:
+        report={'passed':sum(x['status']=='pass' for x in results),'total':len(results),'results':results,'runtime_errors':errors,'method':'Real headless Chromium, set_content HTML, bundled xterm renderer, real Blob Worker. Not a Safari or physical mobile-device test.'}
+        (R/'tests/browser-results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+        page.screenshot(path=str(R/'tests/browser-last.png'))
+        print('RESULT',report['passed'], '/',report['total'],flush=True)
+        browser.close()
