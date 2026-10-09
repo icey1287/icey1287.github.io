@@ -145,7 +145,7 @@ function helpText(){return `icey websh
 Shell 语法
   |  >  >>  <  ;  &&  ||  引号 / 变量 / 基础通配符
   cat ~/about.md | grep -n Agent
-  echo hello > /tmp/hello.txt; cat /tmp/hello.txt
+  echo hello > ~/hello.txt; cat ~/hello.txt
 
 小工具
   neofetch / fortune / achievements / ls -a

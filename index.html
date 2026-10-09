@@ -3668,11 +3668,12 @@ window.makeIceyFiles = function () {
 'use strict';
 class ShellCore {
   constructor(files, snapshot) {
-    this.env = { HOME:'/home/icey', USER:'visitor', SHELL:'icey-web-shell', TERM:'xterm-256color', LANG:'zh_CN.UTF-8', PATH:'/usr/bin:/bin', PWD:'/home/icey' };
+    this.env = { HOME:'/home/icey', USER:'visitor', SHELL:'icey-web-shell', TERM:'xterm-256color', LANG:'zh_CN.UTF-8', PATH:'', PWD:'/home/icey' };
     this.cwd = '/home/icey'; this.last = 0; this.nodes = {};
     this.commands = ('help ls ll pwd cd cat head tail grep wc sort uniq cut find tree echo printf touch mkdir rmdir rm cp mv date uname whoami id env export unset which type basename dirname true false sleep clear history about bio blog projects skills life neofetch fortune mew cowsay coffee sl matrix piano open preview view source man achievements resetfs seq less demo exit').split(' ');
     if (snapshot) { this.nodes=snapshot.nodes; this.cwd=snapshot.cwd; this.env=snapshot.env; this.last=snapshot.last; return; }
-    for (const p of ['/', '/home', '/home/icey', '/tmp', '/usr', '/usr/bin', '/bin']) this.nodes[p]={ type:'dir', protected:true };
+    // Only seed the content home's ancestors; commands are builtins, not OS files.
+    for (const p of ['/', '/home', '/home/icey']) this.nodes[p]={ type:'dir', protected:true };
     for (const [p, text] of Object.entries(files)) {
       const parts=p.split('/'); parts.pop(); let dir='';
       for (const part of parts.filter(Boolean)) { dir += '/'+part; if(!this.nodes[dir]) this.nodes[dir]={type:'dir',protected:true}; }
@@ -4089,7 +4090,7 @@ function helpText(){return `icey websh
 Shell 语法
   |  >  >>  <  ;  &&  ||  引号 / 变量 / 基础通配符
   cat ~/about.md | grep -n Agent
-  echo hello > /tmp/hello.txt; cat /tmp/hello.txt
+  echo hello > ~/hello.txt; cat ~/hello.txt
 
 小工具
   neofetch / fortune / achievements / ls -a

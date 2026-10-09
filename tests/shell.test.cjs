@@ -12,26 +12,39 @@ async function test(name, fn) {try {await fn();++passed;results.push({name,statu
  const sh=new ShellCore(files);
  const output=async cmd=>(await sh.execute(cmd)).out;
  await test('Initial working directory',async()=>assert.equal(await output('pwd'),'/home/icey\n'));
+ await test('Parent navigation exposes only the content hierarchy',async()=>{
+   const shell=new ShellCore(files);
+   assert.equal((await shell.execute('cd; cd ..; pwd; ls; cd ..; pwd; ls')).out,'/home\nicey/\n/\nhome/\n');
+   assert.equal((await shell.execute('cd ..; pwd; ls')).out,'/\nhome/\n');
+   assert.equal((await shell.execute('cd; ls')).out,'about.md\nblog/\nlife.md\nprojects/\nskills.json\n');
+   for(const p of ['/bin','/tmp','/usr','/usr/bin']){
+     assert.equal(shell.nodes[p],undefined);
+     assert.notEqual((await shell.execute('cd '+p)).code,0);
+     assert.equal(shell.cwd,'/home/icey');
+   }
+   assert.doesNotMatch((await shell.execute('env')).out,/\/usr\/bin|\/bin/);
+   assert.equal((await shell.execute('which ls')).out,'ls is a shell builtin\n');
+ });
  await test('Real Markdown files exist',async()=>{for(const n of ['about.md','life.md','projects/cookmind.md'])assert.match(sh.file(n),/^# /)});
  await test('cat returns exact stored source',async()=>assert.equal(await output('cat life.md'),files['/home/icey/life.md']));
  await test('ls -a lists hidden files',async()=>assert.match(await output('ls -a'),/\.curiosity/));
  await test('ls without -a hides hidden files',async()=>assert.doesNotMatch(await output('ls'),/\.curiosity/));
  await test('cd and parent',async()=>{await sh.execute('cd projects');assert.equal(await output('pwd'),'/home/icey/projects\n');await sh.execute('cd ..');assert.equal(sh.cwd,'/home/icey');});
- await test('Home expansion',async()=>{await sh.execute('cd /tmp; cd ~');assert.equal(sh.cwd,'/home/icey');});
+ await test('Home expansion',async()=>{await sh.execute('cd projects; cd ~');assert.equal(sh.cwd,'/home/icey');});
  await test('Pipe grep',async()=>assert.match(await output('cat projects/supermew.md | grep -n RAG'),/RAG/));
  await test('Pipe head',async()=>assert.equal(await output('printf "a\\nb\\nc\\n" | head -n 2'),'a\nb\n'));
  await test('Pipe sort uniq',async()=>assert.equal(await output('printf "b\\na\\nb\\n" | sort | uniq'),'a\nb\n'));
- await test('Output redirection and read',async()=>{await sh.execute('echo hello > /tmp/a.txt');assert.equal(await output('cat /tmp/a.txt'),'hello\n');});
- await test('Append redirection',async()=>{await sh.execute('echo world >> /tmp/a.txt');assert.equal(await output('cat /tmp/a.txt'),'hello\nworld\n');});
- await test('Input redirection',async()=>assert.equal(await output('head -n 1 < /tmp/a.txt'),'hello\n'));
- await test('Quoted path with spaces',async()=>{await sh.execute('echo spaces > "/tmp/a b.txt"');assert.equal(await output('cat "/tmp/a b.txt"'),'spaces\n');});
+ await test('Output redirection and read',async()=>{await sh.execute('echo hello > ~/a.txt');assert.equal(await output('cat ~/a.txt'),'hello\n');});
+ await test('Append redirection',async()=>{await sh.execute('echo world >> ~/a.txt');assert.equal(await output('cat ~/a.txt'),'hello\nworld\n');});
+ await test('Input redirection',async()=>assert.equal(await output('head -n 1 < ~/a.txt'),'hello\n'));
+ await test('Quoted path with spaces',async()=>{await sh.execute('echo spaces > "$HOME/a b.txt"');assert.equal(await output('cat "$HOME/a b.txt"'),'spaces\n');});
  await test('Environment expansion',async()=>assert.equal(await output('export TEST=ok; echo "$TEST"'),'ok\n'));
  await test('Literal single quotes',async()=>assert.equal(await output("echo '$TEST'"),'$TEST\n'));
  await test('Exit variable',async()=>assert.equal(await output('false; echo $?'),'1\n'));
  await test('Conditional AND',async()=>assert.equal(await output('false && echo no; true && echo yes'),'yes\n'));
  await test('Conditional OR',async()=>assert.equal(await output('true || echo no; false || echo yes'),'yes\n'));
- await test('Chinese text roundtrip',async()=>{await sh.execute('echo "你好，终端" > /tmp/中文.txt');assert.equal(await output('cat /tmp/中文.txt'),'你好，终端\n');});
- await test('Create copy move remove',async()=>{await sh.execute('mkdir /tmp/demo; cp /tmp/a.txt /tmp/demo/copy; mv /tmp/demo/copy /tmp/demo/moved');assert.equal(await output('cat /tmp/demo/moved'),'hello\nworld\n');await sh.execute('rm /tmp/demo/moved; rmdir /tmp/demo');assert.ok(!sh.nodes['/tmp/demo']);});
+ await test('Chinese text roundtrip',async()=>{await sh.execute('echo "你好，终端" > ~/中文.txt');assert.equal(await output('cat ~/中文.txt'),'你好，终端\n');});
+ await test('Create copy move remove',async()=>{await sh.execute('mkdir ~/demo; cp ~/a.txt ~/demo/copy; mv ~/demo/copy ~/demo/moved');assert.equal(await output('cat ~/demo/moved'),'hello\nworld\n');await sh.execute('rm ~/demo/moved; rmdir ~/demo');assert.ok(!sh.nodes['/home/icey/demo']);});
  await test('Published profile protected',async()=>{const r=await sh.execute('echo hacked > life.md');assert.notEqual(r.code,0);assert.equal(sh.file('life.md'),files['/home/icey/life.md']);});
  await test('Published delete protected',async()=>{assert.notEqual((await sh.execute('rm about.md')).code,0);assert.ok(sh.nodes['/home/icey/about.md']);});
  await test('Missing file fails',async()=>assert.notEqual((await sh.execute('cat /no-such-file')).code,0));
