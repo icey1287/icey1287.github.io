@@ -48,6 +48,8 @@ python3 build.py
 
 给 `blog/` 添加 Markdown 后重新构建，即可用 `blog` 查看文章列表，点击目录中的文章阅读；文件夹保持为空时不需要任何占位文件。
 
+页面地址统一使用站点相对路径，例如 `#life`、`#projects/feynman-s-cat`、`#blog/2026.10.7`。旧的 `#/home/icey/...` 地址会自动转成短地址。终端以 `/` 为站点根目录，`~` 指向同一位置；`cd ..` 在根目录保持不变。
+
 ## 页面组织
 
 文件预览位于上方，终端位于下方，中间分隔线可以拖动。右上角只保留文件类型与预览 / 源码切换。主题在顶部搜索面板中切换；`piano` 等彩蛋通过终端命令打开。
@@ -56,6 +58,7 @@ python3 build.py
 
 ```sh
 node tests/shell.test.cjs
+node --test tests/routes.test.cjs
 python3 tests/content.test.py
 python3 tests/browser.test.py
 python3 tests/scroll.test.py

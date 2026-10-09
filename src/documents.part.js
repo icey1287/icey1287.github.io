@@ -1,10 +1,10 @@
-const HOME='/home/icey';
-const docPaths={about:HOME+'/about.md',bio:HOME+'/about.md',life:HOME+'/life.md',blog:HOME+'/blog',
-  projects:HOME+'/projects',skills:HOME+'/skills.json'};
-for(const x of P.projects)docPaths['projects/'+x.slug]=HOME+'/projects/'+x.slug+'.md';
+const HOME='/';
+const docPaths={about:HOME+'about.md',bio:HOME+'about.md',life:HOME+'life.md',blog:HOME+'blog',
+  projects:HOME+'projects',skills:HOME+'skills.json'};
+for(const x of P.projects)docPaths['projects/'+x.slug]=HOME+'projects/'+x.slug+'.md';
 let current={path:docPaths.about,mode:'preview',source:'',type:'file'}, history=[],busy=false,toastTimer;
 function liveCore(){return new IceyShellCore(files,shell.state);}
-function prettyPath(p){return p===HOME?'~':p.startsWith(HOME+'/')?'~'+p.slice(HOME.length):p;}
+function prettyPath(p){return p===HOME?'~':'~'+p;}
 function heading(eyebrow,title,sub=''){return `<p class="screen-eyebrow">${E(eyebrow)}</p><h2 class="screen-title">${E(title)}</h2>${sub?`<p class="screen-subtitle">${E(sub)}</p>`:''}`;}
 function toast(text){clearTimeout(toastTimer);$('#toast').textContent=text;$('#toast').hidden=false;toastTimer=setTimeout(()=>$('#toast').hidden=true,3200);}
 window.iceyToast=toast;
@@ -71,7 +71,7 @@ function renderSource(text,highlight=false){
   return pre;
 }
 function directoryMarkdown(path){
-  const core=liveCore(),isProjects=path===HOME+'/projects',isBlog=path===HOME+'/blog';
+  const core=liveCore(),isProjects=path===HOME+'projects',isBlog=path===HOME+'blog';
   const title=isProjects?'开源与个人项目':isBlog?'Blog':prettyPath(path)+'/';
   let children=core.children(path,false);
   if(isProjects){
@@ -84,15 +84,15 @@ function directoryMarkdown(path){
     const name=p.split('/').pop(),node=core.nodes[p],isDir=node.type==='dir';
     const data=isProjects?P.projects.find(x=>x.slug+'.md'===name):null;
     const summary=data?.subtitle || (isBlog&&node.type==='file'?(node.text.match(/^# (.+)$/m)?.[1]||'文章'):isDir?'目录':'文件');
-    return `| [${name}${isDir?'/':''}](${p}) | ${summary.replace(/\|/g,'\\|')} |`;
+    return `| [${name}${isDir?'/':''}](#${encodeURI(window.ICEY_ROUTES.routeForPath(p,core.nodes))}) | ${summary.replace(/\|/g,'\\|')} |`;
   });
   return `# ${title}\n\n${intro}*${prettyPath(path)}/ · ${rows.length} items*\n\n| 文件 | 简介 |\n| --- | --- |\n`+rows.join('\n');
 }
-function setRoute(path){const alias=Object.keys(docPaths).find(k=>docPaths[k]===path)||path;
-  try{window.history.replaceState(null,'','#'+encodeURI(alias));}catch(e){}
+function setRoute(path){
+  try{window.history.replaceState(null,'','#'+encodeURI(window.ICEY_ROUTES.routeForPath(path,shell.state.nodes)));}catch(e){}
 }
 function syncBlogNavigation(){
-  const core=liveCore(),children=core.children(HOME+'/blog',false);
+  const core=liveCore(),children=core.children(HOME+'blog',false);
   const box=$('[data-folder="blog"] .folder-children');
   $('#blog-count').textContent=children.length;
   const existing=[...box.querySelectorAll('[data-doc]')].map(el=>el.dataset.doc);
@@ -138,7 +138,7 @@ function openFile(path,mode='preview',hash=true){
   if(!shell.state.nodes[resolved])throw new Error(prettyPath(resolved)+': No such file or directory');
   current={path:resolved,mode,type:'file',source:''};renderDocument();if(hash)setRoute(resolved);closeSidebar();return resolved;
 }
-function openDoc(name,hash=true){return openFile(docPaths[name]||name,'preview',hash);}
+function openDoc(name,hash=true){return openFile(window.ICEY_ROUTES.pathForRoute(name,shell.state.nodes),'preview',hash);}
 function showDocumentMode(mode){current.mode=mode;renderDocument();}
 function closeSidebar(){document.body.classList.remove('sidebar-open');$('#sidebar-scrim').hidden=true;}
 function status(code=0){

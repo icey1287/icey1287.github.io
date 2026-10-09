@@ -19,7 +19,7 @@ def main():
     profile = template.replace('/*__MANIFEST__*/', json.dumps(MANIFEST, ensure_ascii=False, indent=2))
     profile = profile.replace('/*__CONTENT__*/', json.dumps(files, ensure_ascii=False, indent=2))
     (ROOT / 'src/profile.js').write_text(profile, encoding='utf-8')
-    parts = ['app-head.js','icons.js','documents.part.js','eggs.part.js','effects.part.js',
+    parts = ['app-head.js','icons.js','routes.js','documents.part.js','eggs.part.js','effects.part.js',
              'commands.part.js','input.part.js','boot.part.js']
     app = '\n'.join((ROOT / 'src' / name).read_text(encoding='utf-8') for name in parts)
     (ROOT / 'src/app.js').write_text(app, encoding='utf-8')
@@ -33,7 +33,7 @@ def main():
                     f'<span class="file-glyph">M↓</span><span>{html.escape(slug)}.md</span></button>')
     content = content.replace('/*__PROJECT_COUNT__*/', str(len(rows))).replace('/*__PROJECT_NAV__*/', '\n'.join(rows))
     articles = [name for name in files if name.startswith('blog/') and '/' not in name[5:]]
-    rows = [f'            <button class="file-item" type="button" data-doc="/home/icey/{html.escape(name, quote=True)}">'
+    rows = [f'            <button class="file-item" type="button" data-doc="/{html.escape(name, quote=True)}">'
             f'<span class="file-glyph">M↓</span><span>{html.escape(name[5:])}</span></button>'
             for name in articles]
     content = content.replace('/*__BLOG_COUNT__*/', str(len(rows))).replace('/*__BLOG_NAV__*/', '\n'.join(rows))

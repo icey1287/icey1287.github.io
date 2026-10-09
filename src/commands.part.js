@@ -44,7 +44,7 @@ async function dispatch(source,io){
   if(['about','bio','blog','projects','skills','life'].includes(cmd)){
     if(a.length>1||a.length&&!['projects','blog'].includes(cmd))throw new Error('Usage: '+cmd+(['projects','blog'].includes(cmd)?' [section]':''));
     const key=cmd+(a[0]?'/'+a[0].replace(/\.md$/,''):'');
-    const path=docPaths[key]||(cmd==='blog'&&a[0]?HOME+'/blog/'+a[0].replace(/\.md$/,'')+'.md':null);
+    const path=docPaths[key]||(cmd==='blog'&&a[0]?HOME+'blog/'+a[0].replace(/\.md$/,'')+'.md':null);
     if(!path)throw new Error('No such section: '+key);
     result.out='→ '+prettyPath(openFile(path))+'\n';
   }else if(['preview','view','source','open'].includes(cmd)){

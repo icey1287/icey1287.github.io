@@ -2,7 +2,7 @@
 window.ICEY_PROFILE = /*__MANIFEST__*/;
 window.ICEY_CONTENT = /*__CONTENT__*/;
 window.makeIceyFiles = function () {
-  const base = '/home/icey/';
+  const base = '/';
   const files = Object.fromEntries(Object.entries(window.ICEY_CONTENT).map(([path,text]) => [base+path,text]));
   files[base+'blog'] = {type:'dir'};
   files[base+'.curiosity'] = '# You found a little door.\n\n保持好奇。普通的一天，也值得认真保存。\n\n'

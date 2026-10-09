@@ -454,12 +454,12 @@ dialog::backdrop{background:#15251866;backdrop-filter:blur(3px)}
       <button class="sidebar-scrim" id="sidebar-scrim" type="button" aria-label="关闭文件目录" hidden></button>
       <aside class="sidebar" id="sidebar" aria-label="文件资源管理器">
         <div class="sidebar-heading"><span>EXPLORER</span><span class="sidebar-dots" aria-hidden="true">···</span></div>
-        <div class="root-folder"><span data-icon="chevron-down"></span><span data-icon="folder-open"></span><strong>ICEY / HOME</strong></div>
+        <div class="root-folder"><span data-icon="chevron-down"></span><span data-icon="folder-open"></span><strong>ICEY /</strong></div>
         <nav id="file-nav" aria-label="个人主页文件">
           <button class="file-item active" type="button" data-doc="about"><span class="file-glyph">M↓</span><span>about.md</span><i></i></button>
           <button class="file-item" type="button" data-doc="life"><span class="file-glyph">M↓</span><span>life.md</span></button>
           <details class="nav-folder" data-folder="blog" open><summary><span class="folder-chevron">›</span><span data-icon="folder"></span><span>blog</span><small id="blog-count">1</small></summary><div class="folder-children">
-            <button class="file-item" type="button" data-doc="/home/icey/blog/2026.10.7.md"><span class="file-glyph">M↓</span><span>2026.10.7.md</span></button>
+            <button class="file-item" type="button" data-doc="/blog/2026.10.7.md"><span class="file-glyph">M↓</span><span>2026.10.7.md</span></button>
           </div></details>
           <details class="nav-folder" data-folder="projects" open><summary><span class="folder-chevron">›</span><span data-icon="folder"></span><span>projects</span><small>5</small></summary><div class="folder-children">
             <button class="file-item" type="button" data-doc="projects/supermew"><span class="file-glyph">M↓</span><span>supermew.md</span></button>
@@ -475,7 +475,7 @@ dialog::backdrop{background:#15251866;backdrop-filter:blur(3px)}
       <main class="main-panel" id="main-panel" aria-label="文档与 Shell">
         <section class="document-pane" id="document-pane" aria-label="文件预览">
           <div class="editor-tabs"><div class="document-tab"><span id="tab-glyph" class="file-glyph">M↓</span><span id="doc-tab-label">about.md</span><i class="tab-dot"></i></div><div class="editor-tools"><span id="doc-language">Markdown</span></div></div>
-          <div class="document-toolbar"><div class="breadcrumbs"><span>home</span><b>›</b><span>icey</span><b>›</b><span id="breadcrumb-file">about.md</span></div><div class="preview-switch" role="group" aria-label="文档显示方式"><button type="button" id="preview-button" aria-pressed="true">预览</button><button type="button" id="source-button" aria-pressed="false">源码</button></div></div>
+          <div class="document-toolbar"><div class="breadcrumbs"><span>icey</span><b>›</b><span id="breadcrumb-file">about.md</span></div><div class="preview-switch" role="group" aria-label="文档显示方式"><button type="button" id="preview-button" aria-pressed="true">预览</button><button type="button" id="source-button" aria-pressed="false">源码</button></div></div>
           <div class="document-scroll" id="document-scroll" tabindex="0" aria-label="文档滚动区域"><article class="markdown-body" id="doc-view"></article></div>
         </section>
         <div class="shell-resizer" id="shell-resizer" role="separator" tabindex="0" aria-label="调整下方 Shell 高度" aria-orientation="horizontal" aria-valuemin="160" aria-valuemax="600" aria-valuenow="260" title="拖动调整 Shell 高度 · 双击恢复默认"><span></span></div>
@@ -3646,7 +3646,7 @@ window.ICEY_CONTENT = {
   "skills.json": "{\n  \"Languages\": [\n    \"Python\",\n    \"C++\",\n    \"SQL\",\n    \"Golang\",\n    \"TypeScript\"\n  ],\n  \"Agent & ML\": [\n    \"LangChain\",\n    \"PyTorch\",\n    \"Agent Harness\",\n    \"Agentic RAG\",\n    \"ReAct\",\n    \"HITL\",\n    \"Evaluation\"\n  ],\n  \"Backend & Data\": [\n    \"FastAPI\",\n    \"PostgreSQL\",\n    \"Redis\",\n    \"Milvus\",\n    \"DuckDB\"\n  ],\n  \"Frontend & Delivery\": [\n    \"Vue\",\n    \"Docker\",\n    \"Git\",\n    \"Full-stack delivery\"\n  ]\n}\n"
 };
 window.makeIceyFiles = function () {
-  const base = '/home/icey/';
+  const base = '/';
   const files = Object.fromEntries(Object.entries(window.ICEY_CONTENT).map(([path,text]) => [base+path,text]));
   files[base+'blog'] = {type:'dir'};
   files[base+'.curiosity'] = '# You found a little door.\n\n保持好奇。普通的一天，也值得认真保存。\n\n'
@@ -3667,12 +3667,12 @@ window.makeIceyFiles = function () {
 'use strict';
 class ShellCore {
   constructor(files, snapshot) {
-    this.env = { HOME:'/home/icey', USER:'visitor', SHELL:'icey-web-shell', TERM:'xterm-256color', LANG:'zh_CN.UTF-8', PATH:'', PWD:'/home/icey' };
-    this.cwd = '/home/icey'; this.last = 0; this.nodes = {};
+    this.env = { HOME:'/', USER:'visitor', SHELL:'icey-web-shell', TERM:'xterm-256color', LANG:'zh_CN.UTF-8', PATH:'', PWD:'/' };
+    this.cwd = '/'; this.last = 0; this.nodes = {};
     this.commands = ('help ls ll pwd cd cat head tail grep wc sort uniq cut find tree echo printf touch mkdir rmdir rm cp mv date uname whoami id env export unset which type basename dirname true false sleep clear history about bio blog projects skills life neofetch fortune mew cowsay coffee sl matrix piano open preview view source man achievements resetfs seq less demo exit').split(' ');
     if (snapshot) { this.nodes=snapshot.nodes; this.cwd=snapshot.cwd; this.env=snapshot.env; this.last=snapshot.last; return; }
-    // Only seed the content home's ancestors; commands are builtins, not OS files.
-    for (const p of ['/', '/home', '/home/icey']) this.nodes[p]={ type:'dir', protected:true };
+    // The site content is the filesystem root; no synthetic OS directories.
+    this.nodes['/']={type:'dir',protected:true};
     for (const [p, text] of Object.entries(files)) {
       const parts=p.split('/'); parts.pop(); let dir='';
       for (const part of parts.filter(Boolean)) { dir += '/'+part; if(!this.nodes[dir]) this.nodes[dir]={type:'dir',protected:true}; }
@@ -3733,7 +3733,8 @@ class ShellCore {
     if(!wildcard||!glob)return [val];
     const abs=this.norm(val),re=this.globRegex(abs),matches=Object.keys(this.nodes).filter(p=>re.test(p)&&(!p.split('/').pop().startsWith('.')||val.split('/').pop().startsWith('.'))).sort();
     if(!matches.length)return [val];
-    return matches.map(p=>val.startsWith('/')?p:(p.startsWith(this.cwd+'/')?p.slice(this.cwd.length+1):p));
+    const prefix=this.cwd==='/'?'/':this.cwd+'/';
+    return matches.map(p=>val.startsWith('/')?p:(p.startsWith(prefix)?p.slice(prefix.length):p));
   }
   globRegex(s){return new RegExp('^'+s.split('').map(c=>c==='*'?'[^/]*':c==='?'?'[^/]':/[.+^${}()|[\]\\]/.test(c)?'\\'+c:c).join('')+'$');}
   async execute(line){
@@ -3775,9 +3776,9 @@ class ShellCore {
     let cmd=a.shift();
     const singleAliases={bio:'about',ll:'ls'};if(cmd==='ll')a.unshift('-al');cmd=singleAliases[cmd]||cmd;
     const aliases={about:'about.md',skills:'skills.json',life:'life.md'};
-    if(aliases[cmd])return this.result(this.file('/home/icey/'+aliases[cmd]));
+    if(aliases[cmd])return this.result(this.file('/'+aliases[cmd]));
     if(cmd==='projects'||cmd==='blog'){
-      const dir='/home/icey/'+cmd;
+      const dir='/'+cmd;
       if(a.length>1)this.fail(cmd+': expected zero or one section name');
       if(a.length)return this.result(this.file(dir+'/'+a[0].replace(/\.md$/,'')+'.md'));
       return this.result(this.children(dir).filter(p=>p.endsWith('.md')).map(p=>this.file(p)).join('\n'));
@@ -3809,8 +3810,8 @@ class ShellCore {
       let options=true;for(const x of a){if(options&&x==='--'){options=false;continue;}if(options&&x.startsWith('-')&&x!=='-'){for(const c of x.slice(1)){if(c==='i')insensitive=true;else if(c==='n')number=true;else if(c==='v')invert=true;else if(c==='c')count=true;else if(c==='r'||c==='R')recursive=true;else if(c==='l')onlynames=true;else if(c==='E')extended=true;else if(c==='F')fixed=true;else this.fail('grep: unsupported option '+c);}}else patterns.push(x);}
       if(!patterns.length)this.fail('grep: usage: grep [-invcFlrE] pattern [file ...]',2);const pattern=patterns.shift();if(pattern.length>128)this.fail('grep: pattern limit 128 characters');
       let re;try{re=new RegExp(fixed?pattern.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'):pattern,insensitive?'i':'');}catch(e){this.fail('grep: invalid pattern: '+e.message,2);}
-      let paths=[];for(const p of patterns){const path=this.norm(p);if(this.nodes[path]?.type==='dir'&&recursive)paths.push(...Object.keys(this.nodes).filter(x=>x.startsWith(path+'/')&&this.nodes[x].type==='file'));else paths.push(p);}
-      if(!paths.length&&recursive)paths=Object.keys(this.nodes).filter(x=>x.startsWith(this.cwd+'/')&&this.nodes[x].type==='file');
+      let paths=[];for(const p of patterns){const path=this.norm(p);if(this.nodes[path]?.type==='dir'&&recursive)paths.push(...Object.keys(this.nodes).filter(x=>x.startsWith(path==='/'?'/':path+'/')&&this.nodes[x].type==='file'));else paths.push(p);}
+      if(!paths.length&&recursive)paths=Object.keys(this.nodes).filter(x=>x.startsWith(this.cwd==='/'?'/':this.cwd+'/')&&this.nodes[x].type==='file');
       const inputs=paths.length?paths.map(p=>({name:p,text:p==='-'?stdin:this.file(p)})):[{name:'',text:stdin}];let out=[],total=0;
       for(const {name,text} of inputs){let matches=[];this.lines(text).forEach((line,i)=>{const found=re.test(line);if(found!==invert)matches.push({line,n:i+1});});total+=matches.length;
         if(onlynames){if(matches.length&&name)out.push(name);}else if(count)out.push((inputs.length>1?name+':':'')+matches.length);else for(const m of matches)out.push((inputs.length>1?name+':':'')+(number?m.n+':':'')+m.line);
@@ -3838,7 +3839,7 @@ class ShellCore {
       const walk=(path,prefix,d)=>{if(d>=depth)return;const arr=this.children(path,all);arr.forEach((f,i)=>{const n=this.nodes[f],last=i===arr.length-1;rows.push(prefix+(last?'└── ':'├── ')+f.split('/').pop()+(n.type==='dir'?'/':''));if(n.type==='dir'){dirs++;walk(f,prefix+(last?'    ':'│   '),d+1);}else files++;});};walk(p,'',0);rows.push(`\n${dirs} directories, ${files} files`);return this.result(rows.join('\n')+'\n');
     }
     if(cmd==='find'){
-      let where='.',name=null,type=null,i=0;if(a[0]&&!a[0].startsWith('-')){where=a[0];i++;}for(;i<a.length;i++){if(a[i]==='-name')name=a[++i];else if(a[i]==='-type')type=a[++i];else this.fail('usage: find [path] [-name pattern] [-type f|d]');}if(type&&!['f','d'].includes(type))this.fail('find: -type must be f or d');const p=this.norm(where);if(!this.nodes[p])this.fail('find: No such path');const re=name?this.globRegex(name):null;const found=Object.keys(this.nodes).filter(x=>(x===p||x.startsWith(p==='/'?'/':p+'/'))&&(!re||re.test(x.split('/').pop()))&&(!type||this.nodes[x].type===(type==='f'?'file':'dir'))).sort();return this.result(found.map(x=>where==='.'?'.'+x.slice(p.length):x).join('\n')+(found.length?'\n':''));
+      let where='.',name=null,type=null,i=0;if(a[0]&&!a[0].startsWith('-')){where=a[0];i++;}for(;i<a.length;i++){if(a[i]==='-name')name=a[++i];else if(a[i]==='-type')type=a[++i];else this.fail('usage: find [path] [-name pattern] [-type f|d]');}if(type&&!['f','d'].includes(type))this.fail('find: -type must be f or d');const p=this.norm(where);if(!this.nodes[p])this.fail('find: No such path');const re=name?this.globRegex(name):null;const found=Object.keys(this.nodes).filter(x=>(x===p||x.startsWith(p==='/'?'/':p+'/'))&&(!re||re.test(x.split('/').pop()))&&(!type||this.nodes[x].type===(type==='f'?'file':'dir'))).sort();return this.result(found.map(x=>where==='.'?(x===p?'.':'./'+x.slice(p==='/'?1:p.length+1)):x).join('\n')+(found.length?'\n':''));
     }
     if(cmd==='touch'){if(!a.length)this.fail('touch: missing operand');for(const p of a){const n=this.nodes[this.norm(p)];if(n?.protected)this.fail('touch: Permission denied');if(!n)this.write(p,'');}return this.result();}
     if(cmd==='mkdir'){
@@ -3942,13 +3943,38 @@ const marks={ i:['11','00','11','11','11','11','11'], c:['01110','11000','11000'
 function pixelName(){let rects='',x=0;for(const ch of 'icey'){const m=marks[ch];for(let y=0;y<m.length;y++)for(let c=0;c<m[y].length;c++)if(m[y][c]==='1')rects+=`<rect x="${x+c*6}" y="${y*6}" width="5.6" height="5.6"/>`;x+=(m[0].length+1)*6;}return `<svg class="pixel-name" viewBox="0 0 ${x-6} 42" role="img" aria-label="icey" fill="currentColor">${rects}</svg>`;}
 function pixelCat(){return `<svg class="pixel-cat" viewBox="0 0 32 30" fill="currentColor" role="img" aria-label="一只像素小猫"><path d="M3 2h4v3h3v3h12V5h3V2h4v19h-3v3h-4v3H10v-3H6v-3H3Z" opacity=".15"/><path d="M3 2h3v3H3zm3 3h3v3H6zm-3 0h3v15H3zm23-3h3v18h-3zm-3 3h3v3h-3zM9 8h14v3H9zM6 20h3v3H6zm3 3h14v3H9zm14-3h3v3h-3zM8 13h4v4H8zm12 0h4v4h-4zm-5 5h3v2h-3zm-3 2h3v2h-3zm6 0h3v2h-3z"/><path d="M0 17h6v1H0zm26 0h6v1h-6zM9 28h14v2H9z" opacity=".6"/></svg>`;}
 
-const HOME='/home/icey';
-const docPaths={about:HOME+'/about.md',bio:HOME+'/about.md',life:HOME+'/life.md',blog:HOME+'/blog',
-  projects:HOME+'/projects',skills:HOME+'/skills.json'};
-for(const x of P.projects)docPaths['projects/'+x.slug]=HOME+'/projects/'+x.slug+'.md';
+/* Public routes are relative to the site root, independently of the shell cwd. */
+(function(root){
+  const aliases={about:'/about.md',bio:'/about.md',life:'/life.md',skills:'/skills.json',blog:'/blog',projects:'/projects'};
+  function routeForPath(path,nodes){
+    if(path==='/')return '/';
+    const alias=Object.keys(aliases).find(key=>aliases[key]===path);
+    const relative=path.slice(1);
+    return alias||(nodes[path]?.type==='file'?relative.replace(/\.md$/,''):relative);
+  }
+  function pathForRoute(route,nodes){
+    // Preserve previously shared URLs while canonicalizing them on load.
+    route=route.replace(/^\/home\/icey(?=\/|$)/,'').replace(/^\/home\/?$/,'/');
+    if(route==='/'||route==='~')return '/';
+    route=route.replace(/^\/+|\/+$/g,'');
+    if(aliases[route])return aliases[route];
+    const parts=[];
+    for(const part of route.split('/')){if(!part||part==='.')continue;if(part==='..')parts.pop();else parts.push(part);}
+    const path='/'+parts.join('/');
+    return nodes[path]?path:path+'.md';
+  }
+  const routes={routeForPath,pathForRoute};
+  if(typeof module==='object'&&module.exports)module.exports=routes;
+  else root.ICEY_ROUTES=routes;
+})(typeof window==='object'?window:globalThis);
+
+const HOME='/';
+const docPaths={about:HOME+'about.md',bio:HOME+'about.md',life:HOME+'life.md',blog:HOME+'blog',
+  projects:HOME+'projects',skills:HOME+'skills.json'};
+for(const x of P.projects)docPaths['projects/'+x.slug]=HOME+'projects/'+x.slug+'.md';
 let current={path:docPaths.about,mode:'preview',source:'',type:'file'}, history=[],busy=false,toastTimer;
 function liveCore(){return new IceyShellCore(files,shell.state);}
-function prettyPath(p){return p===HOME?'~':p.startsWith(HOME+'/')?'~'+p.slice(HOME.length):p;}
+function prettyPath(p){return p===HOME?'~':'~'+p;}
 function heading(eyebrow,title,sub=''){return `<p class="screen-eyebrow">${E(eyebrow)}</p><h2 class="screen-title">${E(title)}</h2>${sub?`<p class="screen-subtitle">${E(sub)}</p>`:''}`;}
 function toast(text){clearTimeout(toastTimer);$('#toast').textContent=text;$('#toast').hidden=false;toastTimer=setTimeout(()=>$('#toast').hidden=true,3200);}
 window.iceyToast=toast;
@@ -4015,7 +4041,7 @@ function renderSource(text,highlight=false){
   return pre;
 }
 function directoryMarkdown(path){
-  const core=liveCore(),isProjects=path===HOME+'/projects',isBlog=path===HOME+'/blog';
+  const core=liveCore(),isProjects=path===HOME+'projects',isBlog=path===HOME+'blog';
   const title=isProjects?'开源与个人项目':isBlog?'Blog':prettyPath(path)+'/';
   let children=core.children(path,false);
   if(isProjects){
@@ -4028,15 +4054,15 @@ function directoryMarkdown(path){
     const name=p.split('/').pop(),node=core.nodes[p],isDir=node.type==='dir';
     const data=isProjects?P.projects.find(x=>x.slug+'.md'===name):null;
     const summary=data?.subtitle || (isBlog&&node.type==='file'?(node.text.match(/^# (.+)$/m)?.[1]||'文章'):isDir?'目录':'文件');
-    return `| [${name}${isDir?'/':''}](${p}) | ${summary.replace(/\|/g,'\\|')} |`;
+    return `| [${name}${isDir?'/':''}](#${encodeURI(window.ICEY_ROUTES.routeForPath(p,core.nodes))}) | ${summary.replace(/\|/g,'\\|')} |`;
   });
   return `# ${title}\n\n${intro}*${prettyPath(path)}/ · ${rows.length} items*\n\n| 文件 | 简介 |\n| --- | --- |\n`+rows.join('\n');
 }
-function setRoute(path){const alias=Object.keys(docPaths).find(k=>docPaths[k]===path)||path;
-  try{window.history.replaceState(null,'','#'+encodeURI(alias));}catch(e){}
+function setRoute(path){
+  try{window.history.replaceState(null,'','#'+encodeURI(window.ICEY_ROUTES.routeForPath(path,shell.state.nodes)));}catch(e){}
 }
 function syncBlogNavigation(){
-  const core=liveCore(),children=core.children(HOME+'/blog',false);
+  const core=liveCore(),children=core.children(HOME+'blog',false);
   const box=$('[data-folder="blog"] .folder-children');
   $('#blog-count').textContent=children.length;
   const existing=[...box.querySelectorAll('[data-doc]')].map(el=>el.dataset.doc);
@@ -4082,7 +4108,7 @@ function openFile(path,mode='preview',hash=true){
   if(!shell.state.nodes[resolved])throw new Error(prettyPath(resolved)+': No such file or directory');
   current={path:resolved,mode,type:'file',source:''};renderDocument();if(hash)setRoute(resolved);closeSidebar();return resolved;
 }
-function openDoc(name,hash=true){return openFile(docPaths[name]||name,'preview',hash);}
+function openDoc(name,hash=true){return openFile(window.ICEY_ROUTES.pathForRoute(name,shell.state.nodes),'preview',hash);}
 function showDocumentMode(mode){current.mode=mode;renderDocument();}
 function closeSidebar(){document.body.classList.remove('sidebar-open');$('#sidebar-scrim').hidden=true;}
 function status(code=0){
@@ -4204,7 +4230,7 @@ async function dispatch(source,io){
   if(['about','bio','blog','projects','skills','life'].includes(cmd)){
     if(a.length>1||a.length&&!['projects','blog'].includes(cmd))throw new Error('Usage: '+cmd+(['projects','blog'].includes(cmd)?' [section]':''));
     const key=cmd+(a[0]?'/'+a[0].replace(/\.md$/,''):'');
-    const path=docPaths[key]||(cmd==='blog'&&a[0]?HOME+'/blog/'+a[0].replace(/\.md$/,'')+'.md':null);
+    const path=docPaths[key]||(cmd==='blog'&&a[0]?HOME+'blog/'+a[0].replace(/\.md$/,'')+'.md':null);
     if(!path)throw new Error('No such section: '+key);
     result.out='→ '+prettyPath(openFile(path))+'\n';
   }else if(['preview','view','source','open'].includes(cmd)){
@@ -4636,7 +4662,8 @@ document.addEventListener('click',e=>{
   const link=e.target.closest('#doc-view a');if(!link)return;
   const href=link.getAttribute('href');if(!href||/^(https?:|mailto:)/i.test(href))return;
   e.preventDefault();
-  if(href.startsWith('#')){let anchor=href.slice(1);try{anchor=decodeURIComponent(anchor);}catch(err){}const target=[...$('#doc-view').querySelectorAll('[id]')].find(x=>x.id===anchor||x.id==='md-'+anchor);target?.scrollIntoView({block:'start'});return;}
+  if(href.startsWith('#')){let anchor=href.slice(1);try{anchor=decodeURI(anchor);}catch(err){}const target=[...$('#doc-view').querySelectorAll('[id]')].find(x=>x.id===anchor||x.id==='md-'+anchor);
+    if(target)target.scrollIntoView({block:'start'});else try{openDoc(anchor);}catch(err){toast(err.message);}return;}
   try{const [path,anchor]=href.split('#'),base=current.type==='dir'?current.path:liveCore().parent(current.path);openFile(liveCore().norm(decodeURIComponent(path),base));
     if(anchor){const target=[...$('#doc-view').querySelectorAll('[id]')].find(x=>x.id==='md-'+decodeURIComponent(anchor)||x.id===decodeURIComponent(anchor));target?.scrollIntoView({block:'start'});}
   }catch(err){toast(err.message);}
@@ -4686,7 +4713,7 @@ document.addEventListener('keydown',e=>{
     const k=e.key.length===1?key:e.key;seq=k===secret[seq]?seq+1:k===secret[0]?1:0;if(seq===secret.length){seq=0;konami();}
   }
 });
-function loadRoute(){let h='';try{h=decodeURI(location.hash.slice(1));}catch(e){}try{openDoc(h||'about',false);}catch(e){openDoc('about',false);}}
+function loadRoute(){let h='';try{h=decodeURI(location.hash.slice(1));}catch(e){}try{openDoc(h||'about',false);}catch(e){openDoc('about',false);}setRoute(current.path);}
 window.addEventListener('hashchange',loadRoute);
 window.addEventListener('beforeunload',()=>{shell.dispose();consoleShell.dispose();stopEffect();});
 icons();$('#sidebar-cat').innerHTML=pixelCat();theme(document.documentElement.dataset.theme||'light');loadRoute();updateDivider();

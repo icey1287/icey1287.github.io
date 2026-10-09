@@ -7,12 +7,12 @@
 'use strict';
 class ShellCore {
   constructor(files, snapshot) {
-    this.env = { HOME:'/home/icey', USER:'visitor', SHELL:'icey-web-shell', TERM:'xterm-256color', LANG:'zh_CN.UTF-8', PATH:'', PWD:'/home/icey' };
-    this.cwd = '/home/icey'; this.last = 0; this.nodes = {};
+    this.env = { HOME:'/', USER:'visitor', SHELL:'icey-web-shell', TERM:'xterm-256color', LANG:'zh_CN.UTF-8', PATH:'', PWD:'/' };
+    this.cwd = '/'; this.last = 0; this.nodes = {};
     this.commands = ('help ls ll pwd cd cat head tail grep wc sort uniq cut find tree echo printf touch mkdir rmdir rm cp mv date uname whoami id env export unset which type basename dirname true false sleep clear history about bio blog projects skills life neofetch fortune mew cowsay coffee sl matrix piano open preview view source man achievements resetfs seq less demo exit').split(' ');
     if (snapshot) { this.nodes=snapshot.nodes; this.cwd=snapshot.cwd; this.env=snapshot.env; this.last=snapshot.last; return; }
-    // Only seed the content home's ancestors; commands are builtins, not OS files.
-    for (const p of ['/', '/home', '/home/icey']) this.nodes[p]={ type:'dir', protected:true };
+    // The site content is the filesystem root; no synthetic OS directories.
+    this.nodes['/']={type:'dir',protected:true};
     for (const [p, text] of Object.entries(files)) {
       const parts=p.split('/'); parts.pop(); let dir='';
       for (const part of parts.filter(Boolean)) { dir += '/'+part; if(!this.nodes[dir]) this.nodes[dir]={type:'dir',protected:true}; }
@@ -73,7 +73,8 @@ class ShellCore {
     if(!wildcard||!glob)return [val];
     const abs=this.norm(val),re=this.globRegex(abs),matches=Object.keys(this.nodes).filter(p=>re.test(p)&&(!p.split('/').pop().startsWith('.')||val.split('/').pop().startsWith('.'))).sort();
     if(!matches.length)return [val];
-    return matches.map(p=>val.startsWith('/')?p:(p.startsWith(this.cwd+'/')?p.slice(this.cwd.length+1):p));
+    const prefix=this.cwd==='/'?'/':this.cwd+'/';
+    return matches.map(p=>val.startsWith('/')?p:(p.startsWith(prefix)?p.slice(prefix.length):p));
   }
   globRegex(s){return new RegExp('^'+s.split('').map(c=>c==='*'?'[^/]*':c==='?'?'[^/]':/[.+^${}()|[\]\\]/.test(c)?'\\'+c:c).join('')+'$');}
   async execute(line){
@@ -115,9 +116,9 @@ class ShellCore {
     let cmd=a.shift();
     const singleAliases={bio:'about',ll:'ls'};if(cmd==='ll')a.unshift('-al');cmd=singleAliases[cmd]||cmd;
     const aliases={about:'about.md',skills:'skills.json',life:'life.md'};
-    if(aliases[cmd])return this.result(this.file('/home/icey/'+aliases[cmd]));
+    if(aliases[cmd])return this.result(this.file('/'+aliases[cmd]));
     if(cmd==='projects'||cmd==='blog'){
-      const dir='/home/icey/'+cmd;
+      const dir='/'+cmd;
       if(a.length>1)this.fail(cmd+': expected zero or one section name');
       if(a.length)return this.result(this.file(dir+'/'+a[0].replace(/\.md$/,'')+'.md'));
       return this.result(this.children(dir).filter(p=>p.endsWith('.md')).map(p=>this.file(p)).join('\n'));
@@ -149,8 +150,8 @@ class ShellCore {
       let options=true;for(const x of a){if(options&&x==='--'){options=false;continue;}if(options&&x.startsWith('-')&&x!=='-'){for(const c of x.slice(1)){if(c==='i')insensitive=true;else if(c==='n')number=true;else if(c==='v')invert=true;else if(c==='c')count=true;else if(c==='r'||c==='R')recursive=true;else if(c==='l')onlynames=true;else if(c==='E')extended=true;else if(c==='F')fixed=true;else this.fail('grep: unsupported option '+c);}}else patterns.push(x);}
       if(!patterns.length)this.fail('grep: usage: grep [-invcFlrE] pattern [file ...]',2);const pattern=patterns.shift();if(pattern.length>128)this.fail('grep: pattern limit 128 characters');
       let re;try{re=new RegExp(fixed?pattern.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'):pattern,insensitive?'i':'');}catch(e){this.fail('grep: invalid pattern: '+e.message,2);}
-      let paths=[];for(const p of patterns){const path=this.norm(p);if(this.nodes[path]?.type==='dir'&&recursive)paths.push(...Object.keys(this.nodes).filter(x=>x.startsWith(path+'/')&&this.nodes[x].type==='file'));else paths.push(p);}
-      if(!paths.length&&recursive)paths=Object.keys(this.nodes).filter(x=>x.startsWith(this.cwd+'/')&&this.nodes[x].type==='file');
+      let paths=[];for(const p of patterns){const path=this.norm(p);if(this.nodes[path]?.type==='dir'&&recursive)paths.push(...Object.keys(this.nodes).filter(x=>x.startsWith(path==='/'?'/':path+'/')&&this.nodes[x].type==='file'));else paths.push(p);}
+      if(!paths.length&&recursive)paths=Object.keys(this.nodes).filter(x=>x.startsWith(this.cwd==='/'?'/':this.cwd+'/')&&this.nodes[x].type==='file');
       const inputs=paths.length?paths.map(p=>({name:p,text:p==='-'?stdin:this.file(p)})):[{name:'',text:stdin}];let out=[],total=0;
       for(const {name,text} of inputs){let matches=[];this.lines(text).forEach((line,i)=>{const found=re.test(line);if(found!==invert)matches.push({line,n:i+1});});total+=matches.length;
         if(onlynames){if(matches.length&&name)out.push(name);}else if(count)out.push((inputs.length>1?name+':':'')+matches.length);else for(const m of matches)out.push((inputs.length>1?name+':':'')+(number?m.n+':':'')+m.line);
@@ -178,7 +179,7 @@ class ShellCore {
       const walk=(path,prefix,d)=>{if(d>=depth)return;const arr=this.children(path,all);arr.forEach((f,i)=>{const n=this.nodes[f],last=i===arr.length-1;rows.push(prefix+(last?'└── ':'├── ')+f.split('/').pop()+(n.type==='dir'?'/':''));if(n.type==='dir'){dirs++;walk(f,prefix+(last?'    ':'│   '),d+1);}else files++;});};walk(p,'',0);rows.push(`\n${dirs} directories, ${files} files`);return this.result(rows.join('\n')+'\n');
     }
     if(cmd==='find'){
-      let where='.',name=null,type=null,i=0;if(a[0]&&!a[0].startsWith('-')){where=a[0];i++;}for(;i<a.length;i++){if(a[i]==='-name')name=a[++i];else if(a[i]==='-type')type=a[++i];else this.fail('usage: find [path] [-name pattern] [-type f|d]');}if(type&&!['f','d'].includes(type))this.fail('find: -type must be f or d');const p=this.norm(where);if(!this.nodes[p])this.fail('find: No such path');const re=name?this.globRegex(name):null;const found=Object.keys(this.nodes).filter(x=>(x===p||x.startsWith(p==='/'?'/':p+'/'))&&(!re||re.test(x.split('/').pop()))&&(!type||this.nodes[x].type===(type==='f'?'file':'dir'))).sort();return this.result(found.map(x=>where==='.'?'.'+x.slice(p.length):x).join('\n')+(found.length?'\n':''));
+      let where='.',name=null,type=null,i=0;if(a[0]&&!a[0].startsWith('-')){where=a[0];i++;}for(;i<a.length;i++){if(a[i]==='-name')name=a[++i];else if(a[i]==='-type')type=a[++i];else this.fail('usage: find [path] [-name pattern] [-type f|d]');}if(type&&!['f','d'].includes(type))this.fail('find: -type must be f or d');const p=this.norm(where);if(!this.nodes[p])this.fail('find: No such path');const re=name?this.globRegex(name):null;const found=Object.keys(this.nodes).filter(x=>(x===p||x.startsWith(p==='/'?'/':p+'/'))&&(!re||re.test(x.split('/').pop()))&&(!type||this.nodes[x].type===(type==='f'?'file':'dir'))).sort();return this.result(found.map(x=>where==='.'?(x===p?'.':'./'+x.slice(p==='/'?1:p.length+1)):x).join('\n')+(found.length?'\n':''));
     }
     if(cmd==='touch'){if(!a.length)this.fail('touch: missing operand');for(const p of a){const n=this.nodes[this.norm(p)];if(n?.protected)this.fail('touch: Permission denied');if(!n)this.write(p,'');}return this.result();}
     if(cmd==='mkdir'){
