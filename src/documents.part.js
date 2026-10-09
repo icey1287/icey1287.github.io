@@ -91,10 +91,30 @@ function directoryMarkdown(path){
 function setRoute(path){const alias=Object.keys(docPaths).find(k=>docPaths[k]===path)||path;
   try{window.history.replaceState(null,'','#'+encodeURI(alias));}catch(e){}
 }
+function syncBlogNavigation(){
+  const core=liveCore(),children=core.children(HOME+'/blog',false);
+  const box=$('[data-folder="blog"] .folder-children');
+  $('#blog-count').textContent=children.length;
+  const existing=[...box.querySelectorAll('[data-doc]')].map(el=>el.dataset.doc);
+  if(existing.length===children.length&&existing.every((path,i)=>path===children[i]))return;
+  box.replaceChildren();
+  for(const path of children){
+    const button=document.createElement('button');button.type='button';button.className='file-item';button.dataset.doc=path;
+    const active=path===current.path;button.classList.toggle('active',active);button.setAttribute('aria-current',active?'page':'false');
+    const glyph=document.createElement('span');glyph.className='file-glyph';
+    if(core.nodes[path].type==='dir')glyph.innerHTML=icon('folder');else glyph.textContent=path.endsWith('.md')?'M↓':path.endsWith('.json')?'{ }':'·';
+    const label=document.createElement('span');label.textContent=path.split('/').pop();
+    button.append(glyph,label);box.append(button);
+  }
+}
 function renderDocument(preserveScroll=false){
   const core=liveCore(),node=core.nodes[current.path];if(!node)throw new Error('文件已不存在：'+prettyPath(current.path));
   const sc=$('#document-scroll'),oldY=sc.scrollTop,oldX=sc.scrollLeft,view=$('#doc-view');
-  current.type=node.type;current.source=node.type==='dir'?directoryMarkdown(current.path):node.text;
+  current.type=node.type;if(node.type==='dir')current.mode='preview';
+  current.source=node.type==='dir'?directoryMarkdown(current.path):node.text;
+  $('.editor-tabs').hidden=node.type==='dir';
+  $('.preview-switch').hidden=node.type==='dir';
+  $('#document-pane').setAttribute('aria-label',node.type==='dir'?'目录浏览':'文件预览');
   const isMd=current.path.endsWith('.md')||node.type==='dir',isJson=current.path.endsWith('.json');
   const name=(current.path.split('/').pop()||'/')+(node.type==='dir'?'/':'');
   view.replaceChildren();view.className='markdown-body';
@@ -108,8 +128,8 @@ function renderDocument(preserveScroll=false){
   $('#preview-button').setAttribute('aria-pressed',String(current.mode==='preview'));$('#source-button').setAttribute('aria-pressed',String(current.mode==='source'));
   $('#preview-button').textContent=isJson?'高亮':node.type==='dir'?'目录':'预览';
   $('#source-button').disabled=node.type==='dir';
-  $('#blog-count').textContent=core.children(HOME+'/blog',false).length;
-  document.querySelectorAll('#file-nav [data-doc]').forEach(el=>{const active=docPaths[el.dataset.doc]===current.path;el.classList.toggle('active',active);el.setAttribute('aria-current',active?'page':'false');if(active&&el.closest('details'))el.closest('details').open=true;});
+  syncBlogNavigation();
+  document.querySelectorAll('#file-nav [data-doc]').forEach(el=>{const active=(docPaths[el.dataset.doc]||el.dataset.doc)===current.path;el.classList.toggle('active',active);el.setAttribute('aria-current',active?'page':'false');if(active&&el.closest('details'))el.closest('details').open=true;});
   if(preserveScroll){sc.scrollTop=oldY;sc.scrollLeft=oldX;}else{sc.scrollTop=0;sc.scrollLeft=0;}
   document.title=`${name} — icey / 张一铭`;
 }

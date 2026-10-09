@@ -392,7 +392,3 @@ dialog::backdrop{background:#15251866;backdrop-filter:blur(3px)}
 @media(prefers-reduced-motion:reduce){.shell-state.busy .status-dot{animation:none}}
 
 @media(max-width:760px){.palette-trigger{height:28px;width:auto;max-width:255px;border:1px solid var(--border);background:var(--surface-alt);gap:8px;padding:0 9px}.palette-trigger>span{display:inline;font-size:10px}.palette-trigger>svg{width:12px;height:12px}}
-
-/* Empty directories are a single navigation target, without placeholder files. */
-.empty-folder{padding-left:24px}.empty-folder>svg{width:14px;height:14px;flex:none;color:var(--muted)}
-.file-item .folder-count{font:10px var(--mono);color:var(--faint);margin-left:auto}

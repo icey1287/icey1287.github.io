@@ -32,6 +32,11 @@ def main():
         rows.append(f'            <button class="file-item" type="button" data-doc="projects/{slug}">'
                     f'<span class="file-glyph">M↓</span><span>{html.escape(slug)}.md</span></button>')
     content = content.replace('/*__PROJECT_COUNT__*/', str(len(rows))).replace('/*__PROJECT_NAV__*/', '\n'.join(rows))
+    articles = [name for name in files if name.startswith('blog/') and '/' not in name[5:]]
+    rows = [f'            <button class="file-item" type="button" data-doc="/home/icey/{html.escape(name, quote=True)}">'
+            f'<span class="file-glyph">M↓</span><span>{html.escape(name[5:])}</span></button>'
+            for name in articles]
+    content = content.replace('/*__BLOG_COUNT__*/', str(len(rows))).replace('/*__BLOG_NAV__*/', '\n'.join(rows))
     for marker, path in [('STYLE','src/style.css'),('XTERM_CSS','vendor/xterm.css'),
                          ('MARKED','vendor/marked.js'),('XTERM','vendor/xterm.js'),
                          ('PROFILE','src/profile.js'),('SHELL','src/shell.js'),('APP','src/app.js')]:

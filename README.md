@@ -18,13 +18,14 @@ HTML、样式、Markdown 内容、终端组件与脚本均已内嵌。
 
 ## 内容维护
 
-正文位于 `content/`，其中 `about.md` 是默认首页，`life.md` 是代码之外的记录，`blog/` 初始为空。
+正文位于 `content/`，其中 `about.md` 是默认首页，`life.md` 是代码之外的记录，`blog/` 按日期保存文章。
 
 ```text
 content/
 ├── about.md
 ├── life.md
 ├── blog/
+│   └── 2026.10.7.md
 ├── projects/
 │   ├── supermew.md
 │   ├── ourtomorrow.md

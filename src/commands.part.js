@@ -32,7 +32,7 @@ function incomplete(source){
 }
 function singleCommand(line){try{const tokens=liveCore().lex(line);if(tokens.some(t=>t.op))return null;return tokens.flatMap(t=>liveCore().expand(t,false));}catch(e){return null;}}
 function refreshDocument(){
-  $('#blog-count').textContent=liveCore().children(HOME+'/blog',false).length;
+  syncBlogNavigation();
   if(current.type==='dir'){renderDocument(true);return;}
   if(current.type==='file'&&shell.state.nodes[current.path]?.text!==current.source){
     if(shell.state.nodes[current.path])renderDocument(true);else openDoc('about');
