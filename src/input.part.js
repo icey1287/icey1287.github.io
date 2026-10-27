@@ -236,7 +236,9 @@ class PortfolioTerminal {
     let items=[];
     if(!before)items=shell.core.commands.filter(c=>c.startsWith(last));
     else{
-      const core=liveCore(),slash=last.lastIndexOf('/'),prefix=slash>=0?last.slice(0,slash+1):'',part=last.slice(slash+1),parent=core.norm(prefix||'.');
+      const core=liveCore(),slash=last.lastIndexOf('/'),prefix=slash>=0?last.slice(0,slash+1):'',part=last.slice(slash+1);
+      const section=text.match(/^(blog|notes|life|projects)\s+[^\s]*$/)?.[1];
+      const parent=core.norm(prefix||'.',section?docPaths[section]:core.cwd);
       items=core.children(parent,true).filter(p=>p.split('/').pop().startsWith(part)&&(!/^cd\s/.test(text)||core.nodes[p].type==='dir')).map(p=>prefix+p.split('/').pop()+(core.nodes[p].type==='dir'?'/':''));
     }
     items=[...new Set(items)].sort();if(!items.length){this.bell();return;}

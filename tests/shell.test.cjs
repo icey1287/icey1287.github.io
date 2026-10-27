@@ -14,7 +14,7 @@ async function test(name, fn) {try {await fn();++passed;results.push({name,statu
  await test('Initial working directory',async()=>assert.equal(await output('pwd'),'/\n'));
  await test('Parent navigation exposes only the content hierarchy',async()=>{
    const shell=new ShellCore(files);
-   const listing='about.md\nblog/\nlife.md\nprojects/\nskills.json\n';
+   const listing='Notes/\nabout.md\nblog/\nlife/\nprojects/\nskills.json\n空间动态.md\n';
    assert.equal((await shell.execute('cd; cd ..; pwd; ls; cd ..; pwd; ls')).out,('/\n'+listing).repeat(2));
    assert.equal((await shell.execute('ls ..; ls ../..')).out,listing.repeat(2));
    assert.equal((await shell.execute('cd; ls')).out,listing);
@@ -27,15 +27,15 @@ async function test(name, fn) {try {await fn();++passed;results.push({name,statu
    assert.doesNotMatch((await shell.execute('env')).out,/\/usr\/bin|\/bin/);
    assert.equal((await shell.execute('which ls')).out,'ls is a shell builtin\n');
  });
- await test('Real Markdown files exist',async()=>{for(const n of ['about.md','life.md','projects/cookmind.md'])assert.match(sh.file(n),/^# /)});
- await test('cat returns exact stored source',async()=>assert.equal(await output('cat life.md'),files['/life.md']));
+ await test('Real Markdown files exist',async()=>{for(const n of ['about.md','life/概览.md','projects/cookmind.md'])assert.match(sh.file(n),/^# /)});
+ await test('cat returns exact stored source',async()=>assert.equal(await output('cat life/概览.md'),files['/life/概览.md']));
  await test('ls -a lists hidden files',async()=>assert.match(await output('ls -a'),/\.curiosity/));
  await test('ls without -a hides hidden files',async()=>assert.doesNotMatch(await output('ls'),/\.curiosity/));
  await test('cd and parent',async()=>{await sh.execute('cd projects');assert.equal(await output('pwd'),'/projects\n');await sh.execute('cd ..');assert.equal(sh.cwd,'/');});
  await test('Home expansion',async()=>{await sh.execute('cd projects; cd ~');assert.equal(sh.cwd,'/');});
- await test('Root wildcard paths remain relative',async()=>assert.equal(await output('echo *.md'),'about.md life.md\n'));
+ await test('Root wildcard paths remain relative',async()=>assert.equal(await output('echo *.md'),'about.md 空间动态.md\n'));
  await test('Recursive grep searches site root',async()=>assert.match(await output('grep -rl "当代码越来越容易生成" .'),/\/blog\/2026\.10\.7\.md/));
- await test('find uses valid relative paths from root',async()=>assert.equal(await output('find . -name life.md'),'./life.md\n'));
+ await test('find uses valid relative paths from root',async()=>assert.equal(await output('find . -name 概览.md'),'./life/概览.md\n'));
  await test('Pipe grep',async()=>assert.match(await output('cat projects/supermew.md | grep -n RAG'),/RAG/));
  await test('Pipe head',async()=>assert.equal(await output('printf "a\\nb\\nc\\n" | head -n 2'),'a\nb\n'));
  await test('Pipe sort uniq',async()=>assert.equal(await output('printf "b\\na\\nb\\n" | sort | uniq'),'a\nb\n'));
@@ -50,7 +50,7 @@ async function test(name, fn) {try {await fn();++passed;results.push({name,statu
  await test('Conditional OR',async()=>assert.equal(await output('true || echo no; false || echo yes'),'yes\n'));
  await test('Chinese text roundtrip',async()=>{await sh.execute('echo "你好，终端" > ~/中文.txt');assert.equal(await output('cat ~/中文.txt'),'你好，终端\n');});
  await test('Create copy move remove',async()=>{await sh.execute('mkdir ~/demo; cp ~/a.txt ~/demo/copy; mv ~/demo/copy ~/demo/moved');assert.equal(await output('cat ~/demo/moved'),'hello\nworld\n');await sh.execute('rm ~/demo/moved; rmdir ~/demo');assert.ok(!sh.nodes['/demo']);});
- await test('Published profile protected',async()=>{const r=await sh.execute('echo hacked > life.md');assert.notEqual(r.code,0);assert.equal(sh.file('life.md'),files['/life.md']);});
+ await test('Published profile protected',async()=>{const r=await sh.execute('echo hacked > life/概览.md');assert.notEqual(r.code,0);assert.equal(sh.file('life/概览.md'),files['/life/概览.md']);});
  await test('Published delete protected',async()=>{assert.notEqual((await sh.execute('rm about.md')).code,0);assert.ok(sh.nodes['/about.md']);});
  await test('Missing file fails',async()=>assert.notEqual((await sh.execute('cat /no-such-file')).code,0));
  await test('Unknown command status 127',async()=>assert.equal((await sh.execute('not-a-command')).code,127));

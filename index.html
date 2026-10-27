@@ -436,6 +436,82 @@ dialog::backdrop{background:#15251866;backdrop-filter:blur(3px)}
 @media(prefers-reduced-motion:reduce){.shell-state.busy .status-dot{animation:none}}
 
 @media(max-width:760px){.palette-trigger{height:28px;width:auto;max-width:255px;border:1px solid var(--border);background:var(--surface-alt);gap:8px;padding:0 9px}.palette-trigger>span{display:inline;font-size:10px}.palette-trigger>svg{width:12px;height:12px}}
+
+/* Document directories and pointer interaction. */
+:root{--shell-height:clamp(220px,27vh,280px)}
+.sidebar{flex-basis:242px;width:242px}
+#file-nav{padding-top:9px}
+.file-item,.nav-folder summary{transition:background .18s,color .18s,transform .18s}
+.file-item:hover{transform:translateX(2px)}
+.file-item>span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.folder-label{min-width:0;color:inherit;text-decoration:none;flex:1;padding:8px 0;overflow:hidden;text-overflow:ellipsis}
+.folder-label:hover{color:var(--green-dark)}
+.folder-label.active{color:var(--green-dark);font-weight:600}
+.nav-folder:has(>summary>.folder-label.active)>summary{background:var(--green-bg)}
+.nav-folder[open]>.folder-children{animation:folder-arrive .2s ease-out}
+.nav-folder[open]>summary>.folder-chevron{transform:rotate(90deg)}
+.nav-folder:not([open])>summary>.folder-chevron{transform:rotate(0)}
+.folder-children{margin-left:16px;padding-left:3px}
+.folder-children .nav-folder summary{padding-left:8px;gap:7px;font-size:11px}
+.folder-children .file-item{font-size:10.5px}
+.document-pane{position:relative}
+.markdown-body{max-width:1120px;padding:26px 56px 64px}
+.markdown-body a{transition:color .16s,text-decoration-color .16s}
+.activity-link{display:inline-flex;padding:7px 13px;border:1px solid var(--border);border-radius:5px;text-decoration:none!important;background:var(--surface-alt);font-size:12px;transition:background .18s}
+.activity-link:hover{background:var(--green-bg)}
+.activity-document>h1,.directory-document>h1{margin-bottom:24px}
+.activity-document>h2{font-size:17px}
+.markdown-body .entry-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));list-style:none;padding:0;margin:20px 0 30px;gap:12px}
+.markdown-body .entry-grid li{padding:0;margin:0;min-width:0}
+.entry-grid a{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:108px;padding:18px 20px;background:var(--surface);border:1px solid var(--border);border-radius:7px;text-decoration:none!important}
+.entry-grid strong{font:500 22px/1.7 var(--mono);letter-spacing:-.8px;color:var(--text)}
+.entry-description{font-size:11px;line-height:1.8;color:var(--muted);margin-top:4px}
+.entry-arrow{position:absolute;right:19px;top:15px;color:var(--faint);font:17px var(--mono);transition:transform .2s,color .2s}
+.entry-grid a:hover .entry-arrow{transform:translate(2px,-2px);color:var(--green)}
+.markdown-body .update-list{list-style:none;padding:0;margin:0 0 30px}
+.markdown-body .update-list li{position:relative;display:flex;align-items:baseline;gap:24px;padding:12px 0 12px 19px;margin:0;border-bottom:1px solid var(--border-soft)}
+.update-list li:before{content:'';position:absolute;left:1px;top:23px;width:4px;height:4px;border-radius:50%;background:var(--green)}
+.update-list li:after{content:'';position:absolute;left:3px;top:30px;bottom:-15px;width:1px;background:var(--border)}
+.update-list li:last-child:after{display:none}
+.update-list time{font:10px var(--mono);color:var(--faint);white-space:nowrap}
+.update-list a{flex:1;display:flex;justify-content:space-between;gap:20px;font-size:13px;text-decoration:none!important;color:var(--text)}
+.update-list a:hover{color:var(--green)}
+.update-list a>span{color:var(--faint);font-size:14px}
+.directory-document>p:has(em){font:10px var(--mono);margin:20px 0}
+.category-filters{display:flex;gap:7px;flex-wrap:wrap;margin:25px 0}
+.category-filters button{display:flex;gap:10px;align-items:center;padding:7px 12px;font-size:11px;border:1px solid var(--border);border-radius:5px;background:var(--surface);color:var(--muted);transition:background .18s,color .18s,border-color .18s}
+.category-filters button:hover{border-color:var(--green)}
+.category-filters button[aria-pressed=true]{background:var(--green-bg);color:var(--green-dark);border-color:var(--green)}
+.category-filters button span{font:9px var(--mono);color:var(--faint)}
+.article-directory .table-scroll{margin:0}
+.article-directory table,.article-directory tbody{display:block;width:100%}
+.article-directory thead{display:none}
+.article-directory tr{display:flex;flex-direction:column;gap:7px;padding:22px 24px;margin-bottom:12px;border:1px solid var(--border);border-radius:7px;background:var(--surface)!important}
+.article-directory td{display:block;padding:0;border:0}
+.article-directory td:first-child a{display:block;text-decoration:none;font-size:19px;line-height:1.7;color:var(--text);letter-spacing:-.3px}
+.article-directory td:last-child{font:10px/1.8 var(--mono);color:var(--faint)}
+.article-category{display:inline-block;font:10px var(--sans);padding:3px 8px;background:var(--green-bg);color:var(--green-dark);border-radius:3px;margin-left:13px}
+.travel-directory h2{font:500 14px/1.5 var(--mono);color:var(--muted);margin:30px 0 12px;padding-bottom:10px}
+.travel-directory .table-scroll{margin:0 0 26px}
+.travel-directory table,.travel-directory tbody{display:block}
+.travel-directory thead,.travel-directory td:last-child{display:none}
+.travel-directory tbody{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.travel-directory tr{display:block;background:var(--surface)!important;border:1px solid var(--border);border-radius:5px}
+.travel-directory td{display:block;border:0;padding:0}
+.travel-directory a{display:flex;align-items:center;justify-content:space-between;padding:17px 14px;font-size:12px;text-decoration:none}
+.travel-directory a:after{content:'↗';color:var(--faint);font:12px var(--mono)}
+@media(max-width:600px){.travel-directory tbody{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:380px){.travel-directory tbody{grid-template-columns:1fr}}
+.source-view{padding:10px 22px 48px;max-width:none}
+.interaction-card{position:relative;isolation:isolate;transform:perspective(850px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg));transition:transform .32s cubic-bezier(.2,.7,.2,1),border-color .18s,box-shadow .25s}
+.interaction-card:after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(ellipse 140px 80px at var(--shine-x,50%) var(--shine-y,50%),#ffffff26,transparent 75%);opacity:0;transition:opacity .22s;z-index:1}
+.interaction-card.is-tracking{will-change:transform;transition-duration:.08s,.18s,.25s;border-color:color-mix(in srgb,var(--green) 65%,var(--border));box-shadow:0 3px 8px color-mix(in srgb,var(--text) 3%,transparent)}
+.interaction-card.is-tracking:after{opacity:.8}
+#interaction-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:20;pointer-events:none}
+.page-ghost{position:absolute;z-index:1;overflow:hidden;pointer-events:none;background:var(--surface)}
+@keyframes folder-arrive{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.interaction-card,.interaction-card.is-tracking{transform:none;transition:none}.interaction-card:after,#interaction-canvas{display:none}.page-ghost{display:none}}
+@media print{#interaction-canvas,.page-ghost{display:none}}
 </style>
   <script>try { const t=localStorage.getItem('icey-theme'); if(['light','dark','amber'].includes(t))document.documentElement.dataset.theme=t; } catch(e) {}</script>
 </head>
@@ -455,21 +531,7 @@ dialog::backdrop{background:#15251866;backdrop-filter:blur(3px)}
       <aside class="sidebar" id="sidebar" aria-label="文件资源管理器">
         <div class="sidebar-heading"><span>EXPLORER</span><span class="sidebar-dots" aria-hidden="true">···</span></div>
         <div class="root-folder"><span data-icon="chevron-down"></span><span data-icon="folder-open"></span><strong>ICEY /</strong></div>
-        <nav id="file-nav" aria-label="个人主页文件">
-          <button class="file-item active" type="button" data-doc="about"><span class="file-glyph">M↓</span><span>about.md</span><i></i></button>
-          <button class="file-item" type="button" data-doc="life"><span class="file-glyph">M↓</span><span>life.md</span></button>
-          <details class="nav-folder" data-folder="blog" open><summary><span class="folder-chevron">›</span><span data-icon="folder"></span><span>blog</span><small id="blog-count">1</small></summary><div class="folder-children">
-            <button class="file-item" type="button" data-doc="/blog/2026.10.7.md"><span class="file-glyph">M↓</span><span>2026.10.7.md</span></button>
-          </div></details>
-          <details class="nav-folder" data-folder="projects" open><summary><span class="folder-chevron">›</span><span data-icon="folder"></span><span>projects</span><small>5</small></summary><div class="folder-children">
-            <button class="file-item" type="button" data-doc="projects/supermew"><span class="file-glyph">M↓</span><span>supermew.md</span></button>
-            <button class="file-item" type="button" data-doc="projects/ourtomorrow"><span class="file-glyph">M↓</span><span>ourtomorrow.md</span></button>
-            <button class="file-item" type="button" data-doc="projects/foucs-rabbit"><span class="file-glyph">M↓</span><span>foucs-rabbit.md</span></button>
-            <button class="file-item" type="button" data-doc="projects/cookmind"><span class="file-glyph">M↓</span><span>cookmind.md</span></button>
-            <button class="file-item" type="button" data-doc="projects/feynman-s-cat"><span class="file-glyph">M↓</span><span>feynman-s-cat.md</span></button>
-          </div></details>
-          <button class="file-item" type="button" data-doc="skills"><span class="file-glyph json">{ }</span><span>skills.json</span></button>
-        </nav>
+        <nav id="file-nav" aria-label="个人主页文件"></nav>
         <div class="sidebar-bottom"><div id="sidebar-cat" aria-hidden="true"></div><p>small steps,<br>interesting places.</p></div>
       </aside>
       <main class="main-panel" id="main-panel" aria-label="文档与 Shell">
@@ -3632,23 +3694,131 @@ window.ICEY_PROFILE = {
       "name": "Feynman's Cat",
       "subtitle": "用自己的话教会 AI 猫咪的费曼学习应用"
     }
-  ]
+  ],
+  "navigation": [
+    "about.md",
+    "空间动态.md",
+    "life",
+    "Notes",
+    "blog",
+    "projects",
+    "skills.json"
+  ],
+  "directories": {
+    "life": {
+      "title": "代码之外",
+      "order": [
+        "概览.md",
+        "Travel"
+      ]
+    },
+    "life/Travel": {
+      "title": "Travel",
+      "collapsed": true
+    },
+    "Notes": {
+      "title": "Notes",
+      "categories": [
+        "产品研究",
+        "课程笔记",
+        "行业资料"
+      ]
+    },
+    "blog": {
+      "title": "Blog",
+      "categories": [
+        "生活反思",
+        "科技文章",
+        "读书后记"
+      ]
+    },
+    "projects": {
+      "title": "开源与个人项目",
+      "description": "从 Agent 系统、模型训练，到学习工具和生活里的小项目。"
+    }
+  },
+  "articles": {
+    "blog/2026.10.7.md": {
+      "category": "科技文章"
+    }
+  },
+  "travelDates": {
+    "life/Travel/上海.md": "2025.01",
+    "life/Travel/云南·丽江.md": "2026.06",
+    "life/Travel/云南·大理.md": "2026.06",
+    "life/Travel/云南·昆明.md": "2026.07",
+    "life/Travel/云南·香格里拉.md": "2026.06",
+    "life/Travel/内蒙古·呼和浩特.md": "2026.04",
+    "life/Travel/内蒙古·达拉特旗.md": "2026.04",
+    "life/Travel/北京.md": "2024.06",
+    "life/Travel/吉林·延吉.md": "2023.04",
+    "life/Travel/吉林·长春.md": "2022.08",
+    "life/Travel/四川·成都.md": "2024.01",
+    "life/Travel/广东·广州.md": "2025.02",
+    "life/Travel/广东·深圳.md": "2025.07",
+    "life/Travel/广东·珠海.md": "2025.02",
+    "life/Travel/江苏·南京.md": "2025.01",
+    "life/Travel/浙江·杭州.md": "2024.02",
+    "life/Travel/海南·海口.md": "2024.01",
+    "life/Travel/湖北·武汉.md": "2024.01",
+    "life/Travel/澳门.md": "2026.07",
+    "life/Travel/贵州·兴义.md": "2026.07",
+    "life/Travel/贵州·安顺.md": "2026.07",
+    "life/Travel/贵州·织金.md": "2026.07",
+    "life/Travel/贵州·贵阳.md": "2026.07",
+    "life/Travel/辽宁·兴城.md": "2024.09",
+    "life/Travel/辽宁·大连.md": "2024.08",
+    "life/Travel/辽宁·沈阳.md": "2024.08",
+    "life/Travel/陕西·西安.md": "2026.06",
+    "life/Travel/香港.md": "2026.07",
+    "life/Travel/黑龙江·哈尔滨.md": "2023.05"
+  }
 };
 window.ICEY_CONTENT = {
-  "about.md": "# 关于我\n\n我是 **张一铭 / Yiming Zhang**，也可以叫我 **icey**。\n\n一个软件工程出身，继续向数据科学与 AI 探索的学习者。\n\n我喜欢尝试新技术，把想法做成项目，再从真实的问题和使用反馈中学习。\n\n[GitHub ↗](https://github.com/icey1287) · [Bilibili ↗](https://space.bilibili.com/68332661) · [Email ↗](mailto:zynn32@foxmail.com)\n\n## 我关心什么\n\n- **AI & Agents**：从会回答到能完成任务，关注上下文、工具执行、权限边界和效果评估。\n- **Generative Software Engineering**：探索 LLM 与 Agent 如何改变软件的设计、构建和持续改进。\n- **Learning by Building**：在个人项目里尝试新技术，从成功、报错和迭代中理解技术真正的样子。\n- **Creative Problem Solving**：从日常问题中寻找灵感，做一点真正能用的小工具。\n\n## 我喜欢怎样做事情\n\n- 先弄清楚问题本身，再动手解决\n- *Done is better than perfect*\n- 边做边学，通过实践理解新知识\n- 遇到问题追根究底，而不是只找临时解决办法\n- 尽量自动化重复工作，提高效率\n\n## 我喜欢做怎样的事情\n\n折腾、构建、探索、优化、创造。\n\n- **从 0 到 1 做东西**：把一个想法变成真正能运行的项目、工具或产品\n- **探索新技术**：研究 AI、Agent、LLM、软件工程等新技术，并尝试把它们实际用起来\n\n## Currently exploring\n\nharness、agent自进化/RSI、世界模型",
+  "about.md": "# 关于我\n\n我是 **张一铭 / Yiming Zhang**，也可以叫我 **icey**。\n\n一个软件工程出身，继续向数据科学与 AI 探索的学习者。\n\n我喜欢尝试新技术，把想法做成项目，再从真实的问题和使用反馈中学习。\n\n[GitHub ↗](https://github.com/icey1287) · [Bilibili ↗](https://space.bilibili.com/68332661) · [Email ↗](mailto:zynn32@foxmail.com)\n\n## 我关心什么\n\n- **AI & Agents**：从会回答到能完成任务，关注上下文、工具执行、权限边界和效果评估。\n- **Generative Software Engineering**：探索 LLM 与 Agent 如何改变软件的设计、构建和持续改进。\n- **Learning by Building**：在个人项目里尝试新技术，从成功、报错和迭代中理解技术真正的样子。\n- **Creative Problem Solving**：从日常问题中寻找灵感，做一点真正能用的小工具。\n\n## 我喜欢怎样做事情\n\n- 先弄清楚问题本身，再动手解决\n- *Done is better than perfect*\n- 边做边学，通过实践理解新知识\n- 遇到问题追根究底，而不是只找临时解决办法\n- 尽量自动化重复工作，提高效率\n\n## 我喜欢做怎样的事情\n\n折腾、构建、探索、优化、创造。\n\n- **从 0 到 1 做东西**：把一个想法变成真正能运行的项目、工具或产品\n- **探索新技术**：研究 AI、Agent、LLM、软件工程等新技术，并尝试把它们实际用起来\n\n## Currently exploring\n\nharness、agent自进化/RSI、世界模型\n\n[空间动态](#空间动态)\n",
   "blog/2026.10.7.md": "# 当代码越来越容易生成，我们还能做什么\n\n## 一个我理解的 Demo\n\n2026 年 3 月，我发布过一期讲 Agentic RAG 的视频。\n\n当时 RAG 这个概念比较火，Coding Agent 也刚开始大量涌现，所以我就用 GitHub Copilot 里面内置的 Codex 5.3，一点一点把 [SuperMew](https://github.com/icey1287/SuperMew) 这个项目敲了出来。\n\n虽然这个项目绝大部分代码都是 AI 写的，但是那个时候，每一个模块、甚至每一行比较重要的代码，我基本上自己都是看过的。它最开始其实就是一个比较小的 Demo。\n\n我当时也没有想着要把它做成什么特别大的东西，只是觉得 RAG 似乎就是入门 Agent 的一个很轻松的方向，我花了一些时间去用 LangChain 手搓了一些小东西，想着可以把一些最近学到的东西放进去，也可能给大家提供一些思路，比如后面还能加什么功能。\n\n在当时就是这么一个 Demo，帮我找到了一份 Agent 开发相关的实习。\n\n## 模型越来越强，我交出了更多权限\n\n实习之后，我的大部分精力都放到了公司的业务上，这个开源项目就基本没怎么维护了。然后接下来发生了一件事情。模型开始变得越来越强，并且强得越来越快。GPT-5.5、Opus 4.8。\n\n**这些模型已经强得有点变态了。**\n\n与此同时，Agent 也越来越火。OpenClaw 之类的项目开始讨论 Harness，大家开始讲 Runtime、Skill、Sandbox、多 Agent、Computer Use……既然模型已经这么强了，那我为什么不把原来的 RAG 项目改造成一个更完整的 Agent 项目？\n\n让它不只是检索知识，而是真的能够调用工具、执行任务、做数据分析，甚至以后变成一个完整的个人 Agent。当然，我在一开始设计那个 RAG 项目的时候也是这样设计的。我把 RAG 作为一个工具来给我的大模型调用，里面还内置了一些像天气查询之类的小工具，都是我自己写的。\n\n## 把 Demo 变成 Product 的激进尝试\n\n然后到了 GPT-5.6 的时候，我做了一个现在回头来看非常不好的决定。或者说是做了一次非常激进的尝试。因为当时我觉得模型能力已经强得可怕了。所以我干脆把大量权限都交给了 GPT 和 Codex，让它们自己去重构这个项目。\n\n我让它去研究当时的一些开源 Agent 项目，看看别人是怎么做 Harness、Runtime、Tool System、Sandbox 的，然后吸取里面好的设计，再回来改造我的项目。我的想法其实特别简单：\n\n**把一个 Demo 变成一个真正的 Product。**\n\n听起来挺合理的。但这里面有一个非常大的问题。我的项目从一开始就只是一个练手项目。它没有特别严格的架构设计，也没有特别清晰的模块边界，更没有什么非常完整的工程规范。因为最开始做它的时候，AI 还没有现在这么强，我也没有想过它以后会膨胀成这么大的一个东西。\n\n它本来就是我边学边写出来的。结果后来，我直接让 AI 在这样一个地基上放飞自我了。Ultra，Goal，全开。然后它开始疯狂改。到底改了多少 Token，我已经完全记不清了。几十亿，甚至上百亿可能都有。\n\n最后给我生成了海量的 AI slop。\n\n## AI slop：局部合理，整体失控\n\n这里可能有人会问：\n\nAI slop 到底是什么意思？最简单地说，就是：\n\n**代码很多，看起来也很完整，甚至每个模块单独看都好像挺专业，但是整个系统没有一个人真正理解它。**\n\n一个很简单的逻辑，会出现三四套实现。为了防一个理论上可能发生的问题，它能给你再套五层 abstraction。本来一个函数能解决的问题，最后多出来 Factory、Manager、Coordinator、Adapter、Runtime、Executor……\n\n然后这些东西之间再互相调用。更恐怖的是，它不是完全错。如果它完全写错了，反而很好解决。最大的问题是：\n\n**它每一个局部看起来都挺合理。**\n\n所以你很难在 Code Review 的时候直接说：\n\n> “这行代码有 Bug。”\n\n但当整个系统膨胀到一定程度之后，你会发现：\n\n- 一次很小的修改，会牵连很多模块；\n- 同一个状态，在几个地方分别维护；\n- 一个逻辑出现几套不同实现；\n- 为了兼容过去某个已经不存在的设计，又保留了一堆 fallback；\n- 然后为了修这些 fallback，又继续生成新的 fallback。\n\n整个项目最后就变成了一种非常奇怪的状态：\n\n**AI 很懂每一个局部，但没有任何人拥有整个系统。**\n\n包括我自己。这才是最可怕的地方。\n\n## 我已经看不懂自己的项目了\n\n最开始我还没有意识到这个问题有多严重。我本来的计划是：\n\n让 AI 把这次大重构做完，我再去看看它更新了什么，然后总结一些比较有意思的设计，再发一期新视频。结果它真的“做完”以后，我发现完全不是这么回事。我已经看不懂自己的项目了。更准确一点说：\n\n不是代码本身看不懂。而是我已经不知道：\n\n- 为什么这里要这样设计？\n- 这个模块到底负责什么？\n- 这个 abstraction 是真的需要，还是 AI 当时觉得“这样更工程化”？\n- 这个 fallback 到底解决过什么真实问题？\n- 这个状态为什么在三个地方都有？\n\n整个项目已经失控了。\n\n## 花一两个月，重新拿回控制\n\n所以后来，我在工作之外又花了很长时间，一点一点把这个项目重新梳理回来。\n\n- 删掉重复实现。\n- 重新确定模块边界。\n- 清理一些没有必要的抽象。\n- 把状态重新统一起来。\n- 重新补测试。\n- 重新看调用链。\n\n有些地方最后甚至不是“重构”，而是直接删掉重新写。这个过程前前后后花了我一两个月。但也是在这个过程中，我第一次特别明显地意识到：\n\n**Agent 时代下的软件工程，可能和以前已经不太一样了。**\n\n以前我们担心的是：\n\n代码写不出来。现在很多时候，代码根本不是问题。AI 一晚上可以帮你生成以前一个人写几个月的代码。真正的问题反而变成了：\n\n**你能不能控制这些代码。**\n\n## 软件工程习惯，也是在管理 AI\n\n我后来复盘了一下，之前到底错在哪里。第一个问题，就是我太相信 AI 了。有些东西其实我自己都没有想清楚。但是因为模型表现得特别自信，我就会产生一种错觉：\n\n它好像真的理解我要什么。然后我就让它继续做。实际上很多时候，它只是非常擅长在你给出的局部信息下面，生成一个“看起来合理”的下一步。但：\n\n**看起来合理，不等于整个系统合理。**\n\n第二个问题，是我自己也没有遵循很多最基本的软件工程 Best Practice。比如一开始没有把 architecture 设计清楚。没有明确模块之间到底应该怎么依赖。没有把一些重要的设计约束写进 Agent.md、spec、architecture document 里面。\n\n没有坚持小 Commit。一个任务改几十个文件，出了问题之后根本不知道是哪一步引入的。也没有给 AI 足够明确的 Verify。很多时候我的 Verify 就是：\n\n> “你检查一下有没有问题。”\n\n那这个其实跟没有 Verify 差不多。现在我会更倾向于告诉它：\n\n- 跑哪些测试；\n- 哪些接口行为不能变化；\n- 哪些 benchmark 不能下降；\n- 哪些文件不应该被修改；\n- 这个改动最多允许影响哪些模块。\n\n以前写代码的时候，这些东西可能属于“工程习惯”。但现在我觉得，它们已经开始变成一种：\n\n**怎么管理 AI 的方法。**\n\n## 项目的价值，正在离开技术清单\n\n但是更有意思的事情发生在后面。当我真的花了一两个月，把这个项目重新拿回自己手里以后，我突然又开始觉得：\n\n它好像没有那么重要了。因为现在再去做一个通用 Agent 平台，其实没有什么特别大的意义。年初的时候可能还不一样。那个时候你自己从零写一个 Agent，写一个 RAG，做一点 Tool Calling，甚至搞个简单的 Multi-Agent，确实都很新鲜。\n\n你把它放在简历上，也很容易成为面试官感兴趣的东西。但现在呢？人人都会写。更准确一点说：\n\n**人人都可以让 AI 帮自己写出来。**\n\n那你再做一个：\n\n聊天框 + Tool Calling + RAG + Web Search + Sandbox + MCP……到底有什么意义？如果只是把这些东西重新拼一遍，其实技术含量正在快速下降。除非你真的有一些非常独特的想法。\n\n或者你找到了一个非常明确的场景。比如你真的做一个非常轻量的个人 Agent。它不是为了证明“我会写 Agent”，而是真的每天跟着你一起工作。你把重复性的事情交给它。让它处理邮件、整理信息、跟踪一些任务。\n\n甚至让它随着你的使用不断了解你的习惯。这种东西我反而觉得可能更有意思。至于让它帮你去上课……这个就比较夸张了。虽然现在确实也有不少大学生和研究生已经在让 AI 帮自己上课、做作业了。不过，这个不是重点。\n\n重点是：\n\n**项目的价值正在从“我用了什么技术”，变成“它到底解决了什么问题”。**\n\n## 后端、Agent、算法：我到底该选什么\n\n其实这件事情和最近找工作的感受也特别像。尤其是 2027 届秋招，大家应该都能明显感觉到，整个市场和前几年已经不太一样了。我身边也有不少人，两三段大厂实习，最后秋招结果依然非常一般。所以现在很多人都会开始焦虑：\n\n那我到底应该学什么？后端？Agent？算法？但问题是，这三个方向现在看起来好像都有问题。做传统开发，大家会担心以后 Coding Agent 越来越强，很多初级开发工作会不会被替代。做 Agent，现在又会发现很多 Agent 本身正在被通用模型和通用 Coding Agent 快速商品化。\n\n很多公司一开始可能也想自己做一个通用 Agent，后来做着做着发现：\n\n为什么我要重新做一个比 Codex、Claude Code 还差的东西？所以现在很多 Agent 的落地方向，反而越来越偏 To B。比如企业内部提效。或者帮传统产业做数字化、智能化转型。这些需求肯定不会突然消失。\n\n只是“单独做一个通用 Agent”这件事情本身，可能越来越难形成长期壁垒。而做算法呢？门槛又越来越高。尤其是基础模型这件事情，越来越像少数顶尖团队之间的竞争。对于绝大部分普通人来说，想真正参与最核心的模型研发，本身就不是一件特别容易的事情。\n\n所以很多人现在会有一种感觉：\n\n后端不敢选。Agent 不敢选。算法也不敢选。好像选什么都怕自己刚学完，这个方向就没了。网上有一句我特别喜欢的笑话：\n\n**“学得慢是一件好事，因为学得慢，可能过一段时间就不用学了。”**\n\n听起来很好笑。但其实背后反映的是很多人现在真实的焦虑。技术变化的速度，已经快到大家连方向都不敢选了。\n\n## 先保持看见变化的能力\n\n所以我最近也一直在想：\n\n**那我们到底还能做什么？**\n\n我现在其实也没有一个特别确定的答案。但我至少知道自己准备做什么。第一件事情，还是保持对新技术的关注。我依然会关注新的大模型、新的 Coding Agent、新的产品、新的想法。不是说每一个出来我都要马上学。\n\n而是至少我要知道：\n\n- 这个行业现在正在往哪里走。\n- 哪些事情正在变得便宜。\n- 哪些事情正在变得重要。\n- 哪些能力正在被模型吃掉。\n- 又有哪些新的机会刚刚出现。\n\n因为如果未来真的出现下一波新的浪潮，我至少希望自己能够看见它。\n\n## 回到最开始：我喜欢做东西\n\n第二件事情，是重新回到我最开始喜欢计算机的原因。其实我本科之前为什么会选择计算机？非常简单。小时候喜欢打游戏。后来觉得：\n\n如果我自己也能做一些东西出来，好像挺酷的。我本科刚开始的时候，大模型甚至还没有真正出现。我第一个比较完整的项目，是自己手搓了一个酒水管理系统。大概五千行代码。现在回头看肯定写得非常烂。架构可能也不存在。\n\n但那个东西真的是我自己一行一行敲出来的。而且最后真的能跑。那种感觉我到现在印象都很深。你会觉得：\n\n**这个世界上原来没有这个东西，但是我把它做出来了。**\n\n我后来发现，我真正喜欢的可能一直都是这件事情。做东西。把一个想法变成真的。以前实现一个想法，可能要花一个月。现在有 AI，可能一天就能做出来。那从这个角度来看，AI 对我来说反而不是坏事。它把“创造东西”的成本降到了一个以前完全不敢想象的程度。\n\n## AI 放大了自学的能力\n\n而且 AI 还有另外一个我特别喜欢的地方。就是：\n\n**我们这一代人的自学能力，被极大地放大了。**\n\n以前你不懂一个领域，要找书、找课程、找老师、翻 Stack Overflow。现在很多时候，我可以直接和一个模型聊两个小时。让它从最基础的地方开始讲。让它给我举例子。让我自己做题。做错了它再纠正我。\n\n然后我可以在一天时间里接触以前可能需要一周才能理解的东西。所以最近我反而开始觉得：\n\n或许“学什么能找到工作”当然很重要。但是在这样一个时代里，单纯享受学习本身，也是一件挺不错的事情。因为获取知识从来没有像今天这么容易过。\n\n## 比起为了 Research 而 Research，我更想做有人用的东西\n\n我回到学校以后，其实没有特别想去做 Research。或者更准确一点说，我没有特别想为了“做 Research”这件事情本身去做 Research。首先，我不一定做得出来特别好的东西。其次，就算最后做出了一篇论文，我也会问自己一个问题：\n\n然后呢？这个东西有人会用吗？我自己会用吗？它真的解决了一个现实问题吗？还是它只是在某个非常特定的数据集、非常特定的假设下面，比 Baseline 高了零点几个点？这不是说 Research 没有意义。\n\n真正好的 Research 当然非常有意义。只是对我自己来说，我可能还是更喜欢另外一件事情：\n\n**做一个真的有人会用的东西。**\n\n## Agent 时代的软件工程\n\n所以最近，我又把一部分精力重新放回到了传统后端开发上。或者我现在更喜欢叫它：\n\n**Agent 时代的软件工程。**\n\n因为实习这几个月，我越来越明显地感觉到：\n\n架构、系统设计、数据库、并发、缓存、可靠性，这些东西并没有因为 AI 出现就突然消失。甚至在 AI 能够生成越来越多代码之后，这些东西反而可能变得更重要。因为以前一个人一天写几百行代码。现在一个 Agent 一天可以给你改几万行。\n\n- 那谁来判断这些代码到底该不该存在？\n- 谁来决定模块边界？\n- 谁来定义状态应该由谁拥有？\n- 谁来判断这个 abstraction 到底有没有必要？\n- 谁来设计测试？\n- 谁来决定什么叫“做完了”？\n\n谁来在 AI 生成一万行代码之后说：\n\n**这九千行都删掉。**\n\n我现在越来越觉得：\n\n代码正在变得便宜。但是判断没有。实现正在变得便宜。但是设计没有。生成正在变得便宜。但是验证没有。甚至当 AI 越来越强以后，\n\n**知道什么东西根本不应该写，可能会比知道怎么把它写出来更重要。**\n\n## 未来难以预测，但我仍然愿意创造\n\n当然，也有可能一年之后，连这些东西都被 AI 做得非常好了。我现在说的这些，到时候全部过时。这完全有可能。所以我现在也不太想再去预测：\n\n未来十年什么岗位最有前途。因为可能连未来两年都很难预测。我现在更愿意相信的是：\n\n无论模型怎么变化，有几件事情应该不会那么快消失。\n\n- 对新东西保持好奇。\n- 能够快速学习。\n- 能够判断一个问题是不是真的值得解决。\n- 能够把一个模糊的需求变成一个真正可运行的系统。\n- 能够知道什么时候应该让 AI 写代码。\n- 也知道什么时候应该阻止它继续写。\n\n以及最重要的一点：\n\n**还愿意去做东西。**\n\n可能以后我们真的不会再一行一行地写代码了。甚至“程序员”这个职业本身都会发生非常大的变化。但是只要这个世界上还有问题需要解决，只要我们还有东西想创造，那我觉得，我们应该还是会有事情可以做。只是到那个时候，\n\n代码可能已经不是最重要的那部分了。\n\n## 对代码负责\n\n代码正在变得便宜。实现正在变得便宜。生成正在变得便宜。\n\n**但是判断没有。设计没有。验证没有。**\n\n当代码越来越容易生成，我们真正需要学习的，可能已经不只是怎么写代码。而是怎么对代码负责。\n\n> AI can write the code.  \n> You still have to own the system.\n",
-  "life.md": "# 代码之外\n\n## Travel\n\n喜欢探索不同的城市、文化与风景。代码之外，也给好奇心留一点真实世界的空间。\n\n### 2026\n\n- 2026.07 · 香港 / 澳门 / 贵州·贵阳 / 贵州·织金 / 贵州·安顺 / 贵州·兴义 / 云南·昆明\n- 2026.06 · 陕西·西安 / 云南·丽江 / 云南·香格里拉 / 云南·大理\n- 2026.04 · 内蒙古·呼和浩特 / 内蒙古·达拉特旗\n\n### 2025\n\n- 2025.07 · 广东·深圳\n- 2025.02 · 广东·珠海 / 广东·广州\n- 2025.01 · 上海 / 江苏·南京\n\n### 2024\n\n- 2024.09 · 辽宁·兴城\n- 2024.08 · 辽宁·沈阳 / 辽宁·大连\n- 2024.06 · 北京\n- 2024.02 · 浙江·杭州\n- 2024.01 · 四川·成都 / 湖北·武汉 / 海南·海口\n\n### 2023\n\n- 2023.05 · 黑龙江·哈尔滨\n- 2023.04 · 吉林·延吉\n\n### 2022\n\n- 2022.08 · 吉林·长春\n\n## Piano\n\n正在自学钢琴。像学一门新语言一样，一点点练习，把喜欢的旋律弹出来。\n\n**正在练习**\n\n- home — Toby Fox\n- To the Moon — Kan R. Gao\n\n## Indie games\n\n喜欢叙事驱动的独立游戏：\n\n- Undertale / Deltarune\n- To the Moon\n- OMORI\n",
+  "life/Travel/上海.md": "# 上海\n",
+  "life/Travel/云南·丽江.md": "# 云南·丽江\n",
+  "life/Travel/云南·大理.md": "# 云南·大理\n",
+  "life/Travel/云南·昆明.md": "# 云南·昆明\n",
+  "life/Travel/云南·香格里拉.md": "# 云南·香格里拉\n",
+  "life/Travel/内蒙古·呼和浩特.md": "# 内蒙古·呼和浩特\n",
+  "life/Travel/内蒙古·达拉特旗.md": "# 内蒙古·达拉特旗\n",
+  "life/Travel/北京.md": "# 北京\n",
+  "life/Travel/吉林·延吉.md": "# 吉林·延吉\n",
+  "life/Travel/吉林·长春.md": "# 吉林·长春\n",
+  "life/Travel/四川·成都.md": "# 四川·成都\n",
+  "life/Travel/广东·广州.md": "# 广东·广州\n",
+  "life/Travel/广东·深圳.md": "# 广东·深圳\n",
+  "life/Travel/广东·珠海.md": "# 广东·珠海\n",
+  "life/Travel/江苏·南京.md": "# 江苏·南京\n",
+  "life/Travel/浙江·杭州.md": "# 浙江·杭州\n",
+  "life/Travel/海南·海口.md": "# 海南·海口\n",
+  "life/Travel/湖北·武汉.md": "# 湖北·武汉\n",
+  "life/Travel/澳门.md": "# 澳门\n",
+  "life/Travel/贵州·兴义.md": "# 贵州·兴义\n",
+  "life/Travel/贵州·安顺.md": "# 贵州·安顺\n",
+  "life/Travel/贵州·织金.md": "# 贵州·织金\n",
+  "life/Travel/贵州·贵阳.md": "# 贵州·贵阳\n",
+  "life/Travel/辽宁·兴城.md": "# 辽宁·兴城\n",
+  "life/Travel/辽宁·大连.md": "# 辽宁·大连\n",
+  "life/Travel/辽宁·沈阳.md": "# 辽宁·沈阳\n",
+  "life/Travel/陕西·西安.md": "# 陕西·西安\n",
+  "life/Travel/香港.md": "# 香港\n",
+  "life/Travel/黑龙江·哈尔滨.md": "# 黑龙江·哈尔滨\n",
+  "life/概览.md": "# 代码之外\n\n## Travel\n\n喜欢探索不同的城市、文化与风景。代码之外，也给好奇心留一点真实世界的空间。\n\n### 2026\n\n- 2026.07 · [香港](#life/Travel/香港) / [澳门](#life/Travel/澳门) / [贵州·贵阳](#life/Travel/贵州·贵阳) / [贵州·织金](#life/Travel/贵州·织金) / [贵州·安顺](#life/Travel/贵州·安顺) / [贵州·兴义](#life/Travel/贵州·兴义) / [云南·昆明](#life/Travel/云南·昆明)\n- 2026.06 · [陕西·西安](#life/Travel/陕西·西安) / [云南·丽江](#life/Travel/云南·丽江) / [云南·香格里拉](#life/Travel/云南·香格里拉) / [云南·大理](#life/Travel/云南·大理)\n- 2026.04 · [内蒙古·呼和浩特](#life/Travel/内蒙古·呼和浩特) / [内蒙古·达拉特旗](#life/Travel/内蒙古·达拉特旗)\n\n### 2025\n\n- 2025.07 · [广东·深圳](#life/Travel/广东·深圳)\n- 2025.02 · [广东·珠海](#life/Travel/广东·珠海) / [广东·广州](#life/Travel/广东·广州)\n- 2025.01 · [上海](#life/Travel/上海) / [江苏·南京](#life/Travel/江苏·南京)\n\n### 2024\n\n- 2024.09 · [辽宁·兴城](#life/Travel/辽宁·兴城)\n- 2024.08 · [辽宁·沈阳](#life/Travel/辽宁·沈阳) / [辽宁·大连](#life/Travel/辽宁·大连)\n- 2024.06 · [北京](#life/Travel/北京)\n- 2024.02 · [浙江·杭州](#life/Travel/浙江·杭州)\n- 2024.01 · [四川·成都](#life/Travel/四川·成都) / [湖北·武汉](#life/Travel/湖北·武汉) / [海南·海口](#life/Travel/海南·海口)\n\n### 2023\n\n- 2023.05 · [黑龙江·哈尔滨](#life/Travel/黑龙江·哈尔滨)\n- 2023.04 · [吉林·延吉](#life/Travel/吉林·延吉)\n\n### 2022\n\n- 2022.08 · [吉林·长春](#life/Travel/吉林·长春)\n\n## Piano\n\n正在自学钢琴。像学一门新语言一样，一点点练习，把喜欢的旋律弹出来。\n\n**正在练习**\n\n- home — Toby Fox\n- To the Moon — Kan R. Gao\n\n## Indie games\n\n喜欢叙事驱动的独立游戏：\n\n- Undertale / Deltarune\n- To the Moon\n- OMORI\n",
   "projects/cookmind.md": "# CookMind\n\n**从 Transformer 结构到训练与对齐的小型语言模型实践**\n\n[GitHub ↗](https://github.com/icey1287/CookMind)\n\nCookMind 围绕一个 Decoder-only Transformer 展开，把模型结构、数据处理和不同阶段的训练脚本放在同一个学习项目里。除了调用模型，也向下一层看：Token 如何进入网络、损失如何产生，以及参数究竟如何被更新。\n\n技术栈：`Python` · `PyTorch` · `Transformers` · `DDP` · `uv`\n\n## 模型由哪些部分构成\n\n模型主体包含配置类、Embedding、RMSNorm、RoPE、GQA 注意力、FFN、多层 Transformer Block 和 Causal LM 输出头。\n\n```text\nToken IDs\n   ↓\nEmbedding\n   ↓\nTransformer Block × N\n   ├─ RMSNorm → RoPE / GQA → 残差连接\n   └─ RMSNorm → FFN / 可选 MoE → 残差连接\n   ↓\n最终归一化 → lm_head → Logits / Loss\n```\n\n默认配置采用 512 维隐藏状态、8 层 Transformer、8 个 Query 头与 2 个 Key / Value 头，词表大小为 6,400。结构和训练参数通过配置管理，便于阅读不同模块之间的张量关系。\n\n## 注意力、位置与前馈网络\n\n- **RMSNorm**：围绕均方根做归一化，保留可学习缩放参数。\n- **GQA**：让多组 Query 共享 Key / Value，代码中将注意力头和 KV 头分开配置。\n- **RoPE / YaRN**：对 Query 和 Key 注入旋转位置编码，并提供推理位置缩放配置。\n- **SiLU FFN**：在注意力聚合之后进行逐 Token 的非线性变换。\n- **可选 MoE**：支持路由专家、共享专家、Top-k 分配与负载均衡辅助损失；默认走 Dense FFN。\n\n## 不同训练目标的代码路径\n\n| 阶段 | 脚本 | 关注的问题 |\n| --- | --- | --- |\n| 预训练 | `train_pretrain.py` | 从文本学习下一 Token 预测 |\n| 全量 SFT | `train_full_sft.py` | 将对话数据用于监督微调 |\n| LoRA | `train_lora.py` | 通过低秩适配器进行参数高效微调 |\n| DPO | `train_dpo.py` | 对比同一问题的 chosen / rejected 回答 |\n| GRPO | `train_grpo.py` | 同一提示生成多条回答，按组内相对奖励更新 |\n\nDPO 路径分别计算策略模型与冻结参考模型的回复概率，在有效回复位置上应用掩码并构造偏好损失。GRPO 路径则围绕采样、奖励和组内比较展开，奖励计算包含模型评分，以及可选的推理回复格式评分。\n\n## 训练脚本背后的工程细节\n\n预训练脚本把参数解析、随机种子、分布式初始化、混合精度、DataLoader、优化器、断点恢复、训练循环和权重保存串起来。梯度累积与学习率调整写在实际训练步骤中，训练工具由 `trainer_utils.py` 统一组织。\n\n数据层集中在 `dataset/lm_dataset.py`，模型代码集中在 `model/`，训练入口集中在 `trainer/`。这样可以对照观察：改变训练目标时，哪些模型组件可以复用，哪些样本格式和损失计算需要调整。\n\n## 让实现成为学习笔记\n\n仓库同时记录了注意力、Token / Embedding、Logits、交叉熵与反向传播等学习笔记。代码中保留了较细的中文注释，阅读路径可以从一个张量的形状开始，一直追到一次参数更新。\n\nCookMind 的重点是把模型结构与训练机制放到可阅读、可修改的代码中理解，让“知道这些术语”进一步变成“知道它们在程序里如何协作”。\n",
   "projects/feynman-s-cat.md": "# Feynman's Cat / 费曼的猫\n\n**不是让 AI 教你，而是试着把 AI 猫咪教会**\n\n[GitHub ↗](https://github.com/icey1287/Feynman-s-Cat)\n\n费曼的猫把费曼学习法变成一段交互：选一个知识点，用自己的话向一只“不太懂”的 AI 猫咪解释。它会继续追问，直到解释越来越清楚，知识条逐步增长。\n\n技术栈：`Python` · `Flask` · `HTML` · `CSS` · `JavaScript` · `OpenAI-compatible API`\n\n## 把被动阅读改成主动解释\n\n传统问答通常由用户提问、AI 给答案；这个项目把角色调过来，让用户组织语言、举例子、回答追问。\n\n```text\n选择知识点 / 学科与年级\n             ↓\n       用自己的话解释\n             ↓\n   AI 猫咪追问不清楚的地方\n             ↓\n      补充例子、拆解概念\n             ↓\n   知识条与猫咪状态发生变化\n```\n\n对话的重点不是复述一份标准答案，而是发现自己哪里还讲不通：一个没有解释的术语、一个跳过的因果步骤，或者一个需要更具体的例子。\n\n## 可见的学习反馈\n\n| 知识条 | 猫咪状态 | 交互反馈 |\n| --- | --- | --- |\n| 0–49 | 一头雾水 | 继续追问基础概念 |\n| 50–99 | 一知半解 | 已有部分理解，但仍需要补充 |\n| 100 | 完全掌握 | 完成本轮教学，进入庆祝状态 |\n\n后端根据知识条和本轮增量生成状态、反馈语句与动效类型，例如思考、耳朵抖动、摇尾巴和庆祝，把对话进展转成可感知的变化。\n\n## 随学习对象调整交流方式\n\n后端按小学低年级、小学高年级、初中、高中、大学及以上，以及通用模式配置不同语气和提问深度。学科配置覆盖数学、物理、语言、编程、艺术等方向。\n\n同样是猫咪角色，面向低年级时可以更简单、可爱；面向大学内容时，则更强调抽象概念、深入讨论与批判性问题。角色表现和知识主题共同参与对话组织。\n\n## 轻量的前后端结构\n\nFlask 提供后端接口并托管前端页面，原生 HTML、CSS 与 JavaScript 负责聊天交互和状态展示。后端维护会话、当前主题和知识条，并通过环境变量配置模型、API 地址与密钥，接入兼容接口的模型服务。\n\n项目把学习方法、角色提示、对话状态与界面反馈组合起来：让“我懂了”变成一次需要主动表达、接受追问、再重新解释的过程。\n",
   "projects/foucs-rabbit.md": "# Foucs-rabbit / 专注小萝卜\n\n**把专注计时、宠物养成和学习记录放在一起的微信小程序**\n\n[GitHub ↗](https://github.com/icey1287/Foucs-rabbit)\n\n专注小萝卜是吉林大学 H5 课程设计项目。它把一段专注时间变成一个有开始、有结束、也有反馈的小任务：选择时长与陪伴宠物，完成计时获得金币，再用金币购买或升级宠物。\n\n技术栈：`微信小程序` · `JavaScript` · `WXML / WXSS` · `微信云开发` · `Canvas` · `ECharts`\n\n## 从计时到养成的循环\n\n```text\n选择专注时长与宠物\n        ↓\n倒计时 / 音乐 / 背景 / 陪伴语句\n        ↓\n完成专注 → 写入记录 → 累计时长与金币\n                              ↓\n                       购买、升级宠物\n```\n\n首页提供多档专注时长和宠物选择。专注页用 Canvas 绘制圆形时钟与剩余时间，支持暂停，并结合可切换的背景音乐、图片和陪伴语句营造学习氛围。\n\n## 宠物不只是装饰\n\n养成系统包含萝卜猫、萝卜狗以及不同成长阶段的形象。完成专注获得的金币可以用于购买和升级，宠物的等级又会影响下一次专注时展示的形态。\n\n宠物和金币信息保存在云数据库中。首页读取当前拥有的宠物与等级，专注页接收选中的宠物信息，养成页负责购买、查看和升级，页面之间围绕同一份状态协作。\n\n## 让学习时间留下记录\n\n每次完成专注会写入专注时长、日期与时间戳，并更新累计时长和金币。统计页使用 ECharts 绘制学习时间趋势，包括按星期展示的统计和按月份展示的统计；历史记录页提供另一种回看方式。\n\n计时结束后的反馈因此不止于一个弹窗：这段时间还会成为记录、图表和宠物成长的一部分。\n\n## 页面与数据组织\n\n| 页面 | 职责 |\n| --- | --- |\n| home | 选择时长和陪伴宠物 |\n| focusing | 倒计时、Canvas 时钟、音乐与完成记录 |\n| pet | 宠物购买、等级与成长状态 |\n| info | 学习时间统计图表 |\n| history / me | 历史记录与个人信息 |\n\n项目使用微信云数据库保存用户、专注记录与宠物数据，使用云存储分发背景和音频资源。资源下载后保存到本地文件缓存，再次使用时先检查缓存文件，避免每次进入页面都重新获取。\n\n这份课程设计把移动端交互、定时任务、音频控制、Canvas 绘制、数据可视化和云端存储串成了一条完整的产品路径。\n",
   "projects/ourtomorrow.md": "# OurTomorrow\n\n**为两个人保留日常的小小空间**\n\n[GitHub ↗](https://github.com/icey1287/OurTomorrow)\n\nOurTomorrow 是一个以手机使用体验为中心的双人手账。它把即时状态、主动分享的位置和独立留言放在一起，让普通的一天也有一个可以被记下来的地方。\n\n技术栈：`Vue 3` · `Vite` · `TypeScript` · `Pinia` · `TanStack Vue Query` · `NestJS` · `Prisma` · `PostgreSQL`\n\n## 三件日常的小事\n\n| 场景 | 交互 |\n| --- | --- |\n| 写下此刻 | 更新自己的状态与位置 |\n| 了解对方的近况 | 查看对方最近一次主动发送的位置和更新时间 |\n| 留下一张便笺 | 发送文字与一张照片，在便笺匣查看往来和未读状态 |\n\n位置是主动分享的某一个时刻，而不是持续后台追踪。留言则是一张张独立的便笺，既可以表达当下，也可以稍后打开阅读。\n\n## 轻量的双人设置\n\n设置页围绕共同纪念日、首页扉页句子和当前使用者切换展开。空间名称、显示称呼、纪念日起点等由服务端配置提供，页面围绕同一个双人空间组织内容。\n\n相比堆叠更多社交功能，这个项目把注意力放在最常发生的互动：我现在怎样、你最近在哪里，以及有句话想留给你。\n\n## 前端、接口与持久化\n\n```text\nVue 3 手机端页面\n    ├─ Pinia：前端状态\n    └─ TanStack Vue Query：接口数据\n               ↓\n          NestJS API\n          ├─ Prisma → PostgreSQL\n          └─ 地图服务代理 → 高德 Web 服务\n```\n\n前端使用 TypeScript 管理页面与接口类型，后端由 NestJS 提供业务接口，Prisma 管理数据库模型与迁移。地图查询经过 API 代理，服务密钥保留在后端。\n\n## 开发与交付\n\n仓库分别组织 Web、API 和基础设施配置，提供 OpenAPI 文档、类型检查、测试、生产构建、接口契约检查和端到端测试命令。部署使用 Docker Compose 与 Caddy，覆盖从本地开发到服务交付的完整路径。\n\n这是一次从日常需求出发的全栈实践：让界面、数据与交互围绕一个很小但明确的使用场景工作。\n",
   "projects/supermew.md": "# SuperMew\n\n**面向知识与数据分析的智能体平台**\n\n[GitHub ↗](https://github.com/icey1287/SuperMew)\n\nSuperMew 以知识库为中心，把检索、推理、工具执行和效果评估放进同一套 Agent 运行体系。它关注的不只是“生成一次回答”，还包括一次任务如何持续执行、如何暂停等待确认、如何恢复，以及回答中的证据是否经得起检查。\n\n技术栈：`Python` · `FastAPI` · `LangGraph` · `PostgreSQL` · `Redis` · `Milvus` · `Vue 3` · `TypeScript`\n\n## 从聊天接口到 Agent 运行时\n\n一次任务被拆分为可以持久化、重放和审计的领域对象：\n\n| 对象 | 职责 |\n| --- | --- |\n| Thread / Message | 保存会话边界、用户输入和事实历史 |\n| Run | 表示一次可恢复的 Agent 执行 |\n| Event Journal | 记录执行事件，支持重连与补放 |\n| Checkpoint | 保存人工确认前的执行状态 |\n| Document Version | 固定本次检索所使用的知识版本 |\n\n执行事件先写入 PostgreSQL，再经 SSE 展示给前端；前端按事件序号去重，并通过 `Last-Event-ID` 和事件补放恢复观察。Redis 负责低延迟通知，持久化的执行记录负责保存结果。\n\n## 会规划、会判断证据的 RAG\n\n简单的单事实问题优先走低延迟检索路径；复杂问题由 Fast 模型规划，拆成 2–4 个子问题，通过 LangGraph 并行检索和判断证据，最后去重、合成回答。\n\n```text\n问题与上下文\n    ↓\n复杂度判断 / 子问题规划\n    ↓\nDense + BM25 → RRF → Auto-merging → Rerank\n    ↓\n证据判断：相关性 / 可回答性 / 歧义\n    ↓\n回答 · 重写检索 · 人工澄清\n```\n\n证据不足时，在 Step-back 与 HyDE 中选择一种重写方式，最多再检索、复评一次。遇到需要用户补充信息的情况，通过 HITL 暂停；确认后继续同一个 Run，而不是丢弃前面的执行过程重新开始。\n\n## 细粒度召回，大粒度理解\n\n文档的叶子分块进入 Milvus，父级分块与版本信息保存在 PostgreSQL。Dense 与 Milvus 原生 BM25 双路召回后，由 RRF 融合排序，再在完整候选池上进行父块聚合，最后按配置进入 Rerank。\n\n这种设计把“找到精确片段”和“给模型足够完整的上下文”分开处理：召回时保持粒度，生成时尽量保留完整证据。各阶段的候选、判断与降级信息保存在 `rag_trace` 中，便于复盘一次回答是如何形成的。\n\n## 文档更新与执行恢复\n\n知识库上传由持久化 Index Job 处理。新版本先在独立的候选空间中构建并核验，完成后通过 PostgreSQL CAS 切换当前版本，避免索引构建过程影响正在使用的知识版本。\n\nHITL 暂停和恢复保留 Run、Thread 与 assistant Message 的身份。停止任务会请求后端取消执行；连接断开后，仍可根据事件记录重新接续观察。\n\n## Skill、Tool 与模型控制面\n\n版本化的 Skill / Tool Registry 管理知识库、联网研究、只读 SQL、天气、代码沙箱和受限 HTTPS JSON 工具。模型按当前任务权限获得工具定义，运行时约束工具调用次数、递归、截止时间、上下文预算和重复调用。\n\n模型中心分别配置 Answer、Fast、Grader、Evaluator 角色，并在任务创建时冻结 Model Snapshot。执行中的任务因此不会被后续的模型配置调整悄悄改变。\n\n## 把评估放进迭代过程\n\nRAG 评估包含 Dataset、Evaluation Job、Case 与独立 Worker，以及前端评估工作台。评分涵盖正确性、证据支撑、相关性、完整性、无依据陈述和冲突披露，并能与基线和质量门槛比较。\n\n从请求轨迹到数据集回归，检索和生成的调整都可以放到同一套记录中观察。这个项目把 Agent 的运行、知识版本、工具管理与效果评估连接成一个完整系统。\n",
-  "skills.json": "{\n  \"Languages\": [\n    \"Python\",\n    \"C++\",\n    \"SQL\",\n    \"Golang\",\n    \"TypeScript\"\n  ],\n  \"Agent & ML\": [\n    \"LangChain\",\n    \"PyTorch\",\n    \"Agent Harness\",\n    \"Agentic RAG\",\n    \"ReAct\",\n    \"HITL\",\n    \"Evaluation\"\n  ],\n  \"Backend & Data\": [\n    \"FastAPI\",\n    \"PostgreSQL\",\n    \"Redis\",\n    \"Milvus\",\n    \"DuckDB\"\n  ],\n  \"Frontend & Delivery\": [\n    \"Vue\",\n    \"Docker\",\n    \"Git\",\n    \"Full-stack delivery\"\n  ]\n}\n"
+  "skills.json": "{\n  \"Languages\": [\n    \"Python\",\n    \"C++\",\n    \"SQL\",\n    \"Golang\",\n    \"TypeScript\"\n  ],\n  \"Agent & ML\": [\n    \"LangChain\",\n    \"PyTorch\",\n    \"Agent Harness\",\n    \"Agentic RAG\",\n    \"ReAct\",\n    \"HITL\",\n    \"Evaluation\"\n  ],\n  \"Backend & Data\": [\n    \"FastAPI\",\n    \"PostgreSQL\",\n    \"Redis\",\n    \"Milvus\",\n    \"DuckDB\"\n  ],\n  \"Frontend & Delivery\": [\n    \"Vue\",\n    \"Docker\",\n    \"Git\",\n    \"Full-stack delivery\"\n  ]\n}\n",
+  "空间动态.md": "# 空间动态\n\n## 动态入口\n\n- [Notes](#Notes) · 产品研究 / 课程笔记 / 行业资料\n- [blog](#blog) · 生活反思 / 科技文章 / 读书后记\n- [Travel](#life/Travel)\n- [projects](#projects)\n\n## 知识更新\n\n- 2026-10-09 · [当代码越来越容易生成，我们还能做什么](#blog/2026.10.7)\n\n## 空间更新\n\n- 2026-09-12 · [CookMind](#projects/cookmind)\n- 2026-09-12 · [Feynman's Cat / 费曼的猫](#projects/feynman-s-cat)\n- 2026-09-12 · [Foucs-rabbit / 专注小萝卜](#projects/foucs-rabbit)\n- 2026-09-12 · [OurTomorrow](#projects/ourtomorrow)\n- 2026-09-12 · [SuperMew](#projects/supermew)\n"
 };
 window.makeIceyFiles = function () {
   const base = '/';
   const files = Object.fromEntries(Object.entries(window.ICEY_CONTENT).map(([path,text]) => [base+path,text]));
-  files[base+'blog'] = {type:'dir'};
+  for (const path of Object.keys(window.ICEY_PROFILE.directories)) files[base+path] = {type:'dir'};
   files[base+'.curiosity'] = '# You found a little door.\n\n保持好奇。普通的一天，也值得认真保存。\n\n'
     + '这里有 6 个小彩蛋。线索：\n1. 一只会说话的猫：mew\n2. 偶尔敲错 ls，也会有好事：sl\n'
     + '3. 代码也会下雨：matrix\n4. 给键盘一个不同的工作：piano\n'
@@ -3669,7 +3839,7 @@ class ShellCore {
   constructor(files, snapshot) {
     this.env = { HOME:'/', USER:'visitor', SHELL:'icey-web-shell', TERM:'xterm-256color', LANG:'zh_CN.UTF-8', PATH:'', PWD:'/' };
     this.cwd = '/'; this.last = 0; this.nodes = {};
-    this.commands = ('help ls ll pwd cd cat head tail grep wc sort uniq cut find tree echo printf touch mkdir rmdir rm cp mv date uname whoami id env export unset which type basename dirname true false sleep clear history about bio blog projects skills life neofetch fortune mew cowsay coffee sl matrix piano open preview view source man achievements resetfs seq less demo exit').split(' ');
+    this.commands = ('help ls ll pwd cd cat head tail grep wc sort uniq cut find tree echo printf touch mkdir rmdir rm cp mv date uname whoami id env export unset which type basename dirname true false sleep clear history about bio blog notes activity projects skills life neofetch fortune mew cowsay coffee sl matrix piano open preview view source man achievements resetfs seq less demo exit').split(' ');
     if (snapshot) { this.nodes=snapshot.nodes; this.cwd=snapshot.cwd; this.env=snapshot.env; this.last=snapshot.last; return; }
     // The site content is the filesystem root; no synthetic OS directories.
     this.nodes['/']={type:'dir',protected:true};
@@ -3775,10 +3945,10 @@ class ShellCore {
     if(!a.length)return this.result();
     let cmd=a.shift();
     const singleAliases={bio:'about',ll:'ls'};if(cmd==='ll')a.unshift('-al');cmd=singleAliases[cmd]||cmd;
-    const aliases={about:'about.md',skills:'skills.json',life:'life.md'};
+    const aliases={about:'about.md',skills:'skills.json',activity:'空间动态.md'};
     if(aliases[cmd])return this.result(this.file('/'+aliases[cmd]));
-    if(cmd==='projects'||cmd==='blog'){
-      const dir='/'+cmd;
+    if(['projects','blog','notes','life'].includes(cmd)){
+      const dir='/'+(cmd==='notes'?'Notes':cmd);
       if(a.length>1)this.fail(cmd+': expected zero or one section name');
       if(a.length)return this.result(this.file(dir+'/'+a[0].replace(/\.md$/,'')+'.md'));
       return this.result(this.children(dir).filter(p=>p.endsWith('.md')).map(p=>this.file(p)).join('\n'));
@@ -3945,7 +4115,7 @@ function pixelCat(){return `<svg class="pixel-cat" viewBox="0 0 32 30" fill="cur
 
 /* Public routes are relative to the site root, independently of the shell cwd. */
 (function(root){
-  const aliases={about:'/about.md',bio:'/about.md',life:'/life.md',skills:'/skills.json',blog:'/blog',projects:'/projects'};
+  const aliases={about:'/about.md',bio:'/about.md',life:'/life',notes:'/Notes',activity:'/空间动态.md',skills:'/skills.json',blog:'/blog',projects:'/projects'};
   function routeForPath(path,nodes){
     if(path==='/')return '/';
     const alias=Object.keys(aliases).find(key=>aliases[key]===path);
@@ -3968,8 +4138,132 @@ function pixelCat(){return `<svg class="pixel-cat" viewBox="0 0 32 30" fill="cur
   else root.ICEY_ROUTES=routes;
 })(typeof window==='object'?window:globalThis);
 
+/* Pointer feedback and document transitions share the existing theme ink. */
+const interactionMotion=(()=>{
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  const events=new AbortController();
+  let canvas,ctx,frame=0,trail=[],ripples=[],card=null;
+  let ink='',pageAnimations=[],ghost=null;
+  const cards='.entry-grid a,.article-directory tbody tr,.travel-directory tbody tr';
+  function cancelPage(){
+    for(const animation of pageAnimations)animation.cancel();
+    pageAnimations=[];ghost?.remove();ghost=null;
+  }
+  function resetCard(){
+    if(!card)return;
+    card.classList.remove('is-tracking');
+    for(const name of ['--tilt-x','--tilt-y','--shine-x','--shine-y'])card.style.removeProperty(name);
+    card=null;
+  }
+  function stopPointer(){
+    cancelAnimationFrame(frame);frame=0;trail=[];ripples=[];
+    ctx?.clearRect(0,0,innerWidth,innerHeight);resetCard();
+  }
+  function resize(){
+    const scale=Math.min(devicePixelRatio,2);
+    canvas.width=Math.round(innerWidth*scale);canvas.height=Math.round(innerHeight*scale);
+    ctx.setTransform(scale,0,0,scale,0,0);stopPointer();
+  }
+  function wake(){if(!frame)frame=requestAnimationFrame(draw);}
+  function draw(now){
+    frame=0;ctx.clearRect(0,0,innerWidth,innerHeight);
+    trail=trail.filter(point=>now-point.time<160);
+    ctx.strokeStyle=ink;ctx.fillStyle=ink;ctx.lineWidth=1;ctx.lineCap='round';
+    for(let i=0;i<trail.length;i++){
+      const point=trail[i],life=1-(now-point.time)/160;
+      ctx.globalAlpha=.16*life*point.strength;
+      if(i){ctx.beginPath();ctx.moveTo(trail[i-1].x,trail[i-1].y);ctx.lineTo(point.x,point.y);ctx.stroke();}
+      ctx.beginPath();ctx.arc(point.x,point.y,life,0,Math.PI*2);ctx.fill();
+    }
+    ripples=ripples.filter(ripple=>now-ripple.time<380);
+    for(const ripple of ripples){
+      const progress=(now-ripple.time)/380,radius=8+46*(1-(1-progress)**3);
+      ctx.globalAlpha=.24*(1-progress)**2;ctx.strokeStyle=ink;ctx.lineWidth=1;
+      ctx.beginPath();ctx.arc(ripple.x,ripple.y,radius,0,Math.PI*2);ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    if(trail.length||ripples.length)wake();
+  }
+  function move(event){
+    if(event.pointerType!=='mouse'||reduced.matches)return;
+    const target=event.target,next=target.closest('.interaction-card');
+    if(next!==card){resetCard();card=next;}
+    if(card){
+      const box=card.getBoundingClientRect();
+      const x=Math.max(0,Math.min(1,(event.clientX-box.left)/box.width));
+      const y=Math.max(0,Math.min(1,(event.clientY-box.top)/box.height));
+      card.style.setProperty('--tilt-x',((.5-y)*6).toFixed(2)+'deg');
+      card.style.setProperty('--tilt-y',((x-.5)*6).toFixed(2)+'deg');
+      card.style.setProperty('--shine-x',(x*100).toFixed(1)+'%');
+      card.style.setProperty('--shine-y',(y*100).toFixed(1)+'%');
+      card.classList.add('is-tracking');
+    }
+    const quiet=target.closest('.shell-panel,.source-view')||target.closest('#doc-view')&&current.type==='file'&&current.path!=='/空间动态.md';
+    const now=performance.now();
+    const point={x:event.clientX,y:event.clientY,time:now,strength:quiet ? .28 : 1};
+    const last=trail.at(-1);
+    if(!last||Math.hypot(last.x-point.x,last.y-point.y)>5)trail.push(point);
+    if(trail.length>12)trail.shift();
+    ink=getComputedStyle(document.documentElement).getPropertyValue('--green').trim();wake();
+  }
+  function press(event){
+    if(event.pointerType!=='mouse'||event.button!==0||reduced.matches)return;
+    if(!event.target.closest('#file-nav [data-doc],#file-nav summary,.interaction-card,.category-filters button,#doc-view a[href^="#"]'))return;
+    ripples.push({x:event.clientX,y:event.clientY,time:performance.now()});
+    if(ripples.length>4)ripples.shift();
+    ink=getComputedStyle(document.documentElement).getPropertyValue('--green').trim();wake();
+  }
+  function animate(element,keyframes,options){
+    const animation=element.animate(keyframes,options);pageAnimations.push(animation);
+    animation.onfinish=()=>{pageAnimations=pageAnimations.filter(item=>item!==animation);};
+    return animation;
+  }
+  function beforeRender(view,enabled){
+    cancelPage();resetCard();
+    if(!enabled||reduced.matches)return false;
+    const sc=$('#document-scroll'),pane=$('#document-pane');
+    if(view.childElementCount&&!view.classList.contains('source-view')){
+      const area=sc.getBoundingClientRect(),base=pane.getBoundingClientRect();
+      ghost=document.createElement('div');ghost.className='page-ghost';ghost.inert=true;ghost.setAttribute('aria-hidden','true');
+      Object.assign(ghost.style,{left:area.left-base.left+'px',top:area.top-base.top+'px',width:area.width+'px',height:area.height+'px'});
+      const copy=view.cloneNode(true);copy.removeAttribute('id');
+      for(const el of copy.querySelectorAll('[id]'))el.removeAttribute('id');
+      copy.style.transform=`translate(${-sc.scrollLeft}px,${-sc.scrollTop}px)`;
+      ghost.append(copy);pane.append(ghost);
+    }
+    return true;
+  }
+  function afterRender(view,enabled){
+    for(const item of view.querySelectorAll(cards))item.classList.add('interaction-card');
+    if(!enabled)return;
+    if(ghost){
+      const leaving=ghost;
+      const animation=animate(leaving,[{opacity:1},{opacity:0,transform:'translateY(-3px)'}],{duration:100,easing:'ease-out'});
+      animation.addEventListener('finish',()=>{leaving.remove();if(ghost===leaving)ghost=null;},{once:true});
+    }
+    animate(view,[{opacity:.3},{opacity:1}],{duration:180,easing:'ease-out'});
+    const layers=[...view.children].filter(el=>!el.hidden).slice(0,8);
+    layers.forEach((element,i)=>animate(element,[{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'translateY(0)'}],
+      {duration:210,delay:i*10,easing:'cubic-bezier(.2,.7,.2,1)',fill:'backwards'}));
+  }
+  function init(){
+    canvas=document.createElement('canvas');canvas.id='interaction-canvas';canvas.setAttribute('aria-hidden','true');
+    document.body.append(canvas);ctx=canvas.getContext('2d');resize();
+    const options={passive:true,signal:events.signal};
+    document.addEventListener('pointermove',move,options);
+    document.addEventListener('pointerdown',press,options);
+    document.documentElement.addEventListener('pointerleave',stopPointer,options);
+    window.addEventListener('blur',stopPointer,options);
+    window.addEventListener('resize',resize,options);
+    document.addEventListener('visibilitychange',()=>{if(document.hidden){stopPointer();cancelPage();}},options);
+    reduced.addEventListener('change',()=>{stopPointer();cancelPage();},options);
+  }
+  function dispose(){events.abort();stopPointer();cancelPage();canvas.remove();}
+  return {init,beforeRender,afterRender,dispose};
+})();
+
 const HOME='/';
-const docPaths={about:HOME+'about.md',bio:HOME+'about.md',life:HOME+'life.md',blog:HOME+'blog',
+const docPaths={about:HOME+'about.md',bio:HOME+'about.md',life:HOME+'life',notes:HOME+'Notes',activity:HOME+'空间动态.md',blog:HOME+'blog',
   projects:HOME+'projects',skills:HOME+'skills.json'};
 for(const x of P.projects)docPaths['projects/'+x.slug]=HOME+'projects/'+x.slug+'.md';
 let current={path:docPaths.about,mode:'preview',source:'',type:'file'}, history=[],busy=false,toastTimer;
@@ -4040,42 +4334,119 @@ function renderSource(text,highlight=false){
   lines.forEach((line,i)=>{const row=document.createElement('div');row.className='source-line';const n=document.createElement('span');n.className='line-number';n.textContent=i+1;n.setAttribute('aria-hidden','true');const code=document.createElement('code');if(highlight)code.innerHTML=syntaxJSON(line);else code.textContent=line||' ';row.append(n,code);pre.append(row);});
   return pre;
 }
+const categoryFilters=new Map();
+function travelDate(path){return P.travelDates?.[path.slice(1)]||'';}
+function directoryChildren(path){
+  const core=liveCore(),children=core.children(path,false);
+  const order=path===HOME+'projects'?P.projects.map(x=>x.slug+'.md'):(P.directories[path.slice(1)]?.order||[]);
+  return children.sort((a,b)=>{
+    if(path===HOME+'life/Travel')return travelDate(b).localeCompare(travelDate(a))||a.localeCompare(b,'zh-CN');
+    const rank=p=>{const i=order.indexOf(p.split('/').pop());return i<0?999:i;};
+    return rank(a)-rank(b)||a.localeCompare(b,'zh-CN');
+  });
+}
 function directoryMarkdown(path){
-  const core=liveCore(),isProjects=path===HOME+'projects',isBlog=path===HOME+'blog';
-  const title=isProjects?'开源与个人项目':isBlog?'Blog':prettyPath(path)+'/';
-  let children=core.children(path,false);
-  if(isProjects){
-    const order=new Map(P.projects.map((x,i)=>[x.slug+'.md',i]));
-    children.sort((a,b)=>(order.get(a.split('/').pop())??999)-(order.get(b.split('/').pop())??999));
-  }
-  const intro=isProjects?'从 Agent 系统、模型训练，到学习工具和生活里的小项目。\n\n':'';
-  if(!children.length)return `# ${title}\n\n*${prettyPath(path)}/ · 0 ${isBlog?'articles':'items'}*\n`;
+  const core=liveCore(),config=P.directories[path.slice(1)],isProjects=path===HOME+'projects';
+  const title=config?.title||prettyPath(path)+'/';
+  const children=directoryChildren(path);
+  const intro=config?.description?config.description+'\n\n':'';
+  if(!children.length)return `# ${title}\n\n${intro}*${prettyPath(path)}/ · 0 items*\n`;
   const rows=children.map(p=>{
     const name=p.split('/').pop(),node=core.nodes[p],isDir=node.type==='dir';
-    const data=isProjects?P.projects.find(x=>x.slug+'.md'===name):null;
-    const summary=data?.subtitle || (isBlog&&node.type==='file'?(node.text.match(/^# (.+)$/m)?.[1]||'文章'):isDir?'目录':'文件');
+    const project=isProjects?P.projects.find(x=>x.slug+'.md'===name):null;
+    const summary=project?.subtitle||(isDir?P.directories[p.slice(1)]?.description||'目录':node.text.match(/^# (.+)$/m)?.[1]||'');
     return `| [${name}${isDir?'/':''}](#${encodeURI(window.ICEY_ROUTES.routeForPath(p,core.nodes))}) | ${summary.replace(/\|/g,'\\|')} |`;
   });
-  return `# ${title}\n\n${intro}*${prettyPath(path)}/ · ${rows.length} items*\n\n| 文件 | 简介 |\n| --- | --- |\n`+rows.join('\n');
+  const header=`# ${title}\n\n${intro}*${prettyPath(path)}/ · ${rows.length} items*\n\n`;
+  const table=items=>'| 文件 | 简介 |\n| --- | --- |\n'+items.join('\n');
+  if(path===HOME+'life/Travel'){
+    const months=new Map();
+    children.forEach((p,i)=>{const month=travelDate(p)||'未注明时间';if(!months.has(month))months.set(month,[]);months.get(month).push(rows[i]);});
+    return header+[...months].map(([month,items])=>`## ${month}\n\n${table(items)}`).join('\n\n');
+  }
+  return header+table(rows);
+}
+function categoryControls(view,path){
+  const categories=P.directories[path.slice(1)]?.categories;if(!categories)return;
+  view.classList.add('article-directory');
+  const children=directoryChildren(path).filter(p=>p.endsWith('.md'));
+  const selected=categoryFilters.get(path)||'全部';
+  const controls=document.createElement('div');controls.className='category-filters';controls.setAttribute('role','group');controls.setAttribute('aria-label','文章分类');
+  for(const category of ['全部',...categories]){
+    const count=children.filter(p=>category==='全部'||P.articles[p.slice(1)]?.category===category).length;
+    const button=document.createElement('button');button.type='button';button.dataset.category=category;
+    button.setAttribute('aria-pressed',String(category===selected));button.innerHTML=`${E(category)} <span>${count}</span>`;
+    button.addEventListener('click',()=>{categoryFilters.set(path,category);renderDocument(true);});controls.append(button);
+  }
+  const table=view.querySelector('.table-scroll');
+  (table||view.lastElementChild).before(controls);
+  for(const row of view.querySelectorAll('tbody tr')){
+    const link=row.querySelector('a'),route=decodeURI(link.hash.slice(1)),file=window.ICEY_ROUTES.pathForRoute(route,liveCore().nodes);
+    const category=P.articles[file.slice(1)]?.category;
+    row.hidden=selected!=='全部'&&category!==selected;
+    const filename=link.textContent,summary=row.lastElementChild.textContent;
+    link.textContent=summary||filename;row.lastElementChild.textContent=filename;
+    if(category){const badge=document.createElement('span');badge.className='article-category';badge.textContent=category;row.lastElementChild.append(badge);}
+  }
+}
+function decorateDocument(view,path){
+  if(path==='/about.md')view.querySelector('a[href="#空间动态"]')?.classList.add('activity-link');
+  if(path==='/空间动态.md'){
+    view.classList.add('activity-document');
+    const entrances=view.querySelector('#md-动态入口 + ul');entrances?.classList.add('entry-grid');
+    for(const item of entrances?.children||[]){
+      const link=item.querySelector('a'),description=item.textContent.slice(link.textContent.length).replace(/^ · /,'');
+      link.innerHTML=`<strong>${E(link.textContent)}</strong>${description?`<span class="entry-description">${E(description)}</span>`:''}<span class="entry-arrow" aria-hidden="true">↗</span>`;
+      item.replaceChildren(link);
+    }
+    for(const id of ['md-知识更新','md-空间更新']){
+      const list=view.querySelector('#'+id+' + ul');if(!list)continue;
+      list.classList.add('update-list');
+      for(const item of list.children){
+        const date=item.firstChild.textContent.split(' · ')[0],link=item.querySelector('a');
+        const time=document.createElement('time');time.dateTime=date;time.textContent=date;
+        item.replaceChildren(time,link);link.insertAdjacentHTML('beforeend','<span aria-hidden="true">↗</span>');
+      }
+    }
+  }
+  if(P.directories[path.slice(1)]){
+    view.classList.add('directory-document');
+    if(path==='/life/Travel'){
+      view.classList.add('travel-directory');
+      for(const link of view.querySelectorAll('tbody a'))link.textContent=link.textContent.replace(/\.md$/,'');
+    }
+  }
+}
+let navigationSignature='';
+function syncNavigation(){
+  const core=liveCore(),root=$('#file-nav');
+  const paths=Object.keys(core.nodes).filter(p=>p!=='/'&&!p.split('/').some(part=>part.startsWith('.')));
+  const signature=paths.map(p=>p+':'+core.nodes[p].type).sort().join('|');
+  if(signature===navigationSignature)return;
+  const states=new Map([...root.querySelectorAll('details')].map(el=>[el.dataset.folder,el.open]));
+  navigationSignature=signature;root.replaceChildren();
+  function append(parent,path){
+    const node=core.nodes[path],name=path.split('/').pop();
+    if(node.type==='dir'){
+      const key=path.slice(1),config=P.directories[key],folder=document.createElement('details');folder.className='nav-folder';folder.dataset.folder=key;
+      folder.open=states.get(key)??!config?.collapsed;
+      const children=directoryChildren(path);
+      const summary=document.createElement('summary');
+      summary.innerHTML=`<span class="folder-chevron">›</span>${icon('folder')}<a class="folder-label" data-doc="${E(path)}" href="#${encodeURI(key)}">${E(name)}</a><small${key==='blog'?' id="blog-count"':''}>${children.length}</small>`;
+      const box=document.createElement('div');box.className='folder-children';
+      for(const child of children)append(box,child);
+      folder.append(summary,box);parent.append(folder);
+    }else{
+      const button=document.createElement('button');button.type='button';button.className='file-item';button.dataset.doc=path===HOME+'about.md'?'about':path===HOME+'skills.json'?'skills':path;
+      button.innerHTML=`<span class="file-glyph${path.endsWith('.json')?' json':''}">${path.endsWith('.json')?'{ }':'M↓'}</span><span>${E(name)}</span>`;
+      parent.append(button);
+    }
+  }
+  const top=core.children(HOME,false),order=P.navigation.map(name=>HOME+name);
+  for(const path of [...order.filter(p=>top.includes(p)),...top.filter(p=>!order.includes(p))])append(root,path);
 }
 function setRoute(path){
   try{window.history.replaceState(null,'','#'+encodeURI(window.ICEY_ROUTES.routeForPath(path,shell.state.nodes)));}catch(e){}
-}
-function syncBlogNavigation(){
-  const core=liveCore(),children=core.children(HOME+'blog',false);
-  const box=$('[data-folder="blog"] .folder-children');
-  $('#blog-count').textContent=children.length;
-  const existing=[...box.querySelectorAll('[data-doc]')].map(el=>el.dataset.doc);
-  if(existing.length===children.length&&existing.every((path,i)=>path===children[i]))return;
-  box.replaceChildren();
-  for(const path of children){
-    const button=document.createElement('button');button.type='button';button.className='file-item';button.dataset.doc=path;
-    const active=path===current.path;button.classList.toggle('active',active);button.setAttribute('aria-current',active?'page':'false');
-    const glyph=document.createElement('span');glyph.className='file-glyph';
-    if(core.nodes[path].type==='dir')glyph.innerHTML=icon('folder');else glyph.textContent=path.endsWith('.md')?'M↓':path.endsWith('.json')?'{ }':'·';
-    const label=document.createElement('span');label.textContent=path.split('/').pop();
-    button.append(glyph,label);box.append(button);
-  }
 }
 function renderDocument(preserveScroll=false){
   const core=liveCore(),node=core.nodes[current.path];if(!node)throw new Error('文件已不存在：'+prettyPath(current.path));
@@ -4087,9 +4458,10 @@ function renderDocument(preserveScroll=false){
   $('#document-pane').setAttribute('aria-label',node.type==='dir'?'目录浏览':'文件预览');
   const isMd=current.path.endsWith('.md')||node.type==='dir',isJson=current.path.endsWith('.json');
   const name=(current.path.split('/').pop()||'/')+(node.type==='dir'?'/':'');
+  const transition=interactionMotion.beforeRender(view,current.mode==='preview'&&!preserveScroll);
   view.replaceChildren();view.className='markdown-body';
   if(current.mode==='source') {view.classList.add('source-view');view.append(renderSource(current.source));}
-  else if(isMd){view.append(renderMarkdown(current.source));}
+  else if(isMd){view.append(renderMarkdown(current.source));decorateDocument(view,current.path);if(node.type==='dir')categoryControls(view,current.path);}
   else {view.classList.add('source-view');view.append(renderSource(current.source,isJson));}
   $('#doc-tab-label').textContent=name;$('#tab-glyph').textContent=isJson?'{ }':node.type==='dir'?'▱':'M↓';
   $('#doc-language').textContent=node.type==='dir'?'Directory':isJson?'JSON':isMd?'Markdown':'Text';
@@ -4098,9 +4470,11 @@ function renderDocument(preserveScroll=false){
   $('#preview-button').setAttribute('aria-pressed',String(current.mode==='preview'));$('#source-button').setAttribute('aria-pressed',String(current.mode==='source'));
   $('#preview-button').textContent=isJson?'高亮':node.type==='dir'?'目录':'预览';
   $('#source-button').disabled=node.type==='dir';
-  syncBlogNavigation();
-  document.querySelectorAll('#file-nav [data-doc]').forEach(el=>{const active=(docPaths[el.dataset.doc]||el.dataset.doc)===current.path;el.classList.toggle('active',active);el.setAttribute('aria-current',active?'page':'false');if(active&&el.closest('details'))el.closest('details').open=true;});
+  syncNavigation();
+  document.querySelectorAll('#file-nav [data-doc]').forEach(el=>{const active=(docPaths[el.dataset.doc]||el.dataset.doc)===current.path;el.classList.toggle('active',active);el.setAttribute('aria-current',active?'page':'false');if(active){let folder=el.parentElement.closest('details');while(folder){folder.open=true;folder=folder.parentElement.closest('details');}}});
+  if(!preserveScroll)$('#file-nav [aria-current="page"]')?.scrollIntoView({block:'nearest'});
   if(preserveScroll){sc.scrollTop=oldY;sc.scrollLeft=oldX;}else{sc.scrollTop=0;sc.scrollLeft=0;}
+  interactionMotion.afterRender(view,transition);
   document.title=`${name} — icey / 张一铭`;
 }
 function openFile(path,mode='preview',hash=true){
@@ -4119,7 +4493,8 @@ function status(code=0){
 function helpText(){return `icey websh
 
 浏览文档
-  about / life / skills
+  about / activity / life / skills
+  notes [article]
   blog [article]
   projects [name]
     ${P.projects.map(x=>x.slug).join(" / ")}
@@ -4218,7 +4593,7 @@ function incomplete(source){
 }
 function singleCommand(line){try{const tokens=liveCore().lex(line);if(tokens.some(t=>t.op))return null;return tokens.flatMap(t=>liveCore().expand(t,false));}catch(e){return null;}}
 function refreshDocument(){
-  syncBlogNavigation();
+  syncNavigation();
   if(current.type==='dir'){renderDocument(true);return;}
   if(current.type==='file'&&shell.state.nodes[current.path]?.text!==current.source){
     if(shell.state.nodes[current.path])renderDocument(true);else openDoc('about');
@@ -4227,11 +4602,11 @@ function refreshDocument(){
 async function dispatch(source,io){
   const line=scriptText(source).trim(),args=singleCommand(line),cmd=args?.[0],a=args?.slice(1)||[];
   let result={out:'',code:0};
-  if(['about','bio','blog','projects','skills','life'].includes(cmd)){
-    if(a.length>1||a.length&&!['projects','blog'].includes(cmd))throw new Error('Usage: '+cmd+(['projects','blog'].includes(cmd)?' [section]':''));
-    const key=cmd+(a[0]?'/'+a[0].replace(/\.md$/,''):'');
-    const path=docPaths[key]||(cmd==='blog'&&a[0]?HOME+'blog/'+a[0].replace(/\.md$/,'')+'.md':null);
-    if(!path)throw new Error('No such section: '+key);
+  if(['about','bio','blog','projects','skills','life','notes','activity'].includes(cmd)){
+    const sections=['projects','blog','notes','life'];
+    if(a.length>1||a.length&&!sections.includes(cmd))throw new Error('Usage: '+cmd+(sections.includes(cmd)?' [section]':''));
+    const base=docPaths[cmd];
+    const path=a.length?window.ICEY_ROUTES.pathForRoute(base+'/'+a[0],shell.state.nodes):base;
     result.out='→ '+prettyPath(openFile(path))+'\n';
   }else if(['preview','view','source','open'].includes(cmd)){
     if(a.length>1||!a.length&&cmd!=='source')throw new Error('Usage: '+cmd+' <file>');
@@ -4515,7 +4890,9 @@ class PortfolioTerminal {
     let items=[];
     if(!before)items=shell.core.commands.filter(c=>c.startsWith(last));
     else{
-      const core=liveCore(),slash=last.lastIndexOf('/'),prefix=slash>=0?last.slice(0,slash+1):'',part=last.slice(slash+1),parent=core.norm(prefix||'.');
+      const core=liveCore(),slash=last.lastIndexOf('/'),prefix=slash>=0?last.slice(0,slash+1):'',part=last.slice(slash+1);
+      const section=text.match(/^(blog|notes|life|projects)\s+[^\s]*$/)?.[1];
+      const parent=core.norm(prefix||'.',section?docPaths[section]:core.cwd);
       items=core.children(parent,true).filter(p=>p.split('/').pop().startsWith(part)&&(!/^cd\s/.test(text)||core.nodes[p].type==='dir')).map(p=>prefix+p.split('/').pop()+(core.nodes[p].type==='dir'?'/':''));
     }
     items=[...new Set(items)].sort();if(!items.length){this.bell();return;}
@@ -4715,8 +5092,8 @@ document.addEventListener('keydown',e=>{
 });
 function loadRoute(){let h='';try{h=decodeURI(location.hash.slice(1));}catch(e){}try{openDoc(h||'about',false);}catch(e){openDoc('about',false);}setRoute(current.path);}
 window.addEventListener('hashchange',loadRoute);
-window.addEventListener('beforeunload',()=>{shell.dispose();consoleShell.dispose();stopEffect();});
-icons();$('#sidebar-cat').innerHTML=pixelCat();theme(document.documentElement.dataset.theme||'light');loadRoute();updateDivider();
+window.addEventListener('beforeunload',()=>{shell.dispose();consoleShell.dispose();stopEffect();interactionMotion.dispose();});
+interactionMotion.init();icons();$('#sidebar-cat').innerHTML=pixelCat();theme(document.documentElement.dataset.theme||'light');loadRoute();updateDivider();
 if(!/Mac|iPhone|iPad/.test(navigator.platform))$('.palette-trigger kbd').textContent='Ctrl ⇧ P';
 consoleShell.ready.then(()=>focusInput());
 window.ICEY_APP={run,openDoc,openFile,shell,files,profile:P,renderMarkdown,setShellHeight,terminal:consoleShell,

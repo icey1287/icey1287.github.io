@@ -1,5 +1,5 @@
 const HOME='/';
-const docPaths={about:HOME+'about.md',bio:HOME+'about.md',life:HOME+'life.md',blog:HOME+'blog',
+const docPaths={about:HOME+'about.md',bio:HOME+'about.md',life:HOME+'life',notes:HOME+'Notes',activity:HOME+'空间动态.md',blog:HOME+'blog',
   projects:HOME+'projects',skills:HOME+'skills.json'};
 for(const x of P.projects)docPaths['projects/'+x.slug]=HOME+'projects/'+x.slug+'.md';
 let current={path:docPaths.about,mode:'preview',source:'',type:'file'}, history=[],busy=false,toastTimer;
@@ -70,42 +70,119 @@ function renderSource(text,highlight=false){
   lines.forEach((line,i)=>{const row=document.createElement('div');row.className='source-line';const n=document.createElement('span');n.className='line-number';n.textContent=i+1;n.setAttribute('aria-hidden','true');const code=document.createElement('code');if(highlight)code.innerHTML=syntaxJSON(line);else code.textContent=line||' ';row.append(n,code);pre.append(row);});
   return pre;
 }
+const categoryFilters=new Map();
+function travelDate(path){return P.travelDates?.[path.slice(1)]||'';}
+function directoryChildren(path){
+  const core=liveCore(),children=core.children(path,false);
+  const order=path===HOME+'projects'?P.projects.map(x=>x.slug+'.md'):(P.directories[path.slice(1)]?.order||[]);
+  return children.sort((a,b)=>{
+    if(path===HOME+'life/Travel')return travelDate(b).localeCompare(travelDate(a))||a.localeCompare(b,'zh-CN');
+    const rank=p=>{const i=order.indexOf(p.split('/').pop());return i<0?999:i;};
+    return rank(a)-rank(b)||a.localeCompare(b,'zh-CN');
+  });
+}
 function directoryMarkdown(path){
-  const core=liveCore(),isProjects=path===HOME+'projects',isBlog=path===HOME+'blog';
-  const title=isProjects?'开源与个人项目':isBlog?'Blog':prettyPath(path)+'/';
-  let children=core.children(path,false);
-  if(isProjects){
-    const order=new Map(P.projects.map((x,i)=>[x.slug+'.md',i]));
-    children.sort((a,b)=>(order.get(a.split('/').pop())??999)-(order.get(b.split('/').pop())??999));
-  }
-  const intro=isProjects?'从 Agent 系统、模型训练，到学习工具和生活里的小项目。\n\n':'';
-  if(!children.length)return `# ${title}\n\n*${prettyPath(path)}/ · 0 ${isBlog?'articles':'items'}*\n`;
+  const core=liveCore(),config=P.directories[path.slice(1)],isProjects=path===HOME+'projects';
+  const title=config?.title||prettyPath(path)+'/';
+  const children=directoryChildren(path);
+  const intro=config?.description?config.description+'\n\n':'';
+  if(!children.length)return `# ${title}\n\n${intro}*${prettyPath(path)}/ · 0 items*\n`;
   const rows=children.map(p=>{
     const name=p.split('/').pop(),node=core.nodes[p],isDir=node.type==='dir';
-    const data=isProjects?P.projects.find(x=>x.slug+'.md'===name):null;
-    const summary=data?.subtitle || (isBlog&&node.type==='file'?(node.text.match(/^# (.+)$/m)?.[1]||'文章'):isDir?'目录':'文件');
+    const project=isProjects?P.projects.find(x=>x.slug+'.md'===name):null;
+    const summary=project?.subtitle||(isDir?P.directories[p.slice(1)]?.description||'目录':node.text.match(/^# (.+)$/m)?.[1]||'');
     return `| [${name}${isDir?'/':''}](#${encodeURI(window.ICEY_ROUTES.routeForPath(p,core.nodes))}) | ${summary.replace(/\|/g,'\\|')} |`;
   });
-  return `# ${title}\n\n${intro}*${prettyPath(path)}/ · ${rows.length} items*\n\n| 文件 | 简介 |\n| --- | --- |\n`+rows.join('\n');
+  const header=`# ${title}\n\n${intro}*${prettyPath(path)}/ · ${rows.length} items*\n\n`;
+  const table=items=>'| 文件 | 简介 |\n| --- | --- |\n'+items.join('\n');
+  if(path===HOME+'life/Travel'){
+    const months=new Map();
+    children.forEach((p,i)=>{const month=travelDate(p)||'未注明时间';if(!months.has(month))months.set(month,[]);months.get(month).push(rows[i]);});
+    return header+[...months].map(([month,items])=>`## ${month}\n\n${table(items)}`).join('\n\n');
+  }
+  return header+table(rows);
+}
+function categoryControls(view,path){
+  const categories=P.directories[path.slice(1)]?.categories;if(!categories)return;
+  view.classList.add('article-directory');
+  const children=directoryChildren(path).filter(p=>p.endsWith('.md'));
+  const selected=categoryFilters.get(path)||'全部';
+  const controls=document.createElement('div');controls.className='category-filters';controls.setAttribute('role','group');controls.setAttribute('aria-label','文章分类');
+  for(const category of ['全部',...categories]){
+    const count=children.filter(p=>category==='全部'||P.articles[p.slice(1)]?.category===category).length;
+    const button=document.createElement('button');button.type='button';button.dataset.category=category;
+    button.setAttribute('aria-pressed',String(category===selected));button.innerHTML=`${E(category)} <span>${count}</span>`;
+    button.addEventListener('click',()=>{categoryFilters.set(path,category);renderDocument(true);});controls.append(button);
+  }
+  const table=view.querySelector('.table-scroll');
+  (table||view.lastElementChild).before(controls);
+  for(const row of view.querySelectorAll('tbody tr')){
+    const link=row.querySelector('a'),route=decodeURI(link.hash.slice(1)),file=window.ICEY_ROUTES.pathForRoute(route,liveCore().nodes);
+    const category=P.articles[file.slice(1)]?.category;
+    row.hidden=selected!=='全部'&&category!==selected;
+    const filename=link.textContent,summary=row.lastElementChild.textContent;
+    link.textContent=summary||filename;row.lastElementChild.textContent=filename;
+    if(category){const badge=document.createElement('span');badge.className='article-category';badge.textContent=category;row.lastElementChild.append(badge);}
+  }
+}
+function decorateDocument(view,path){
+  if(path==='/about.md')view.querySelector('a[href="#空间动态"]')?.classList.add('activity-link');
+  if(path==='/空间动态.md'){
+    view.classList.add('activity-document');
+    const entrances=view.querySelector('#md-动态入口 + ul');entrances?.classList.add('entry-grid');
+    for(const item of entrances?.children||[]){
+      const link=item.querySelector('a'),description=item.textContent.slice(link.textContent.length).replace(/^ · /,'');
+      link.innerHTML=`<strong>${E(link.textContent)}</strong>${description?`<span class="entry-description">${E(description)}</span>`:''}<span class="entry-arrow" aria-hidden="true">↗</span>`;
+      item.replaceChildren(link);
+    }
+    for(const id of ['md-知识更新','md-空间更新']){
+      const list=view.querySelector('#'+id+' + ul');if(!list)continue;
+      list.classList.add('update-list');
+      for(const item of list.children){
+        const date=item.firstChild.textContent.split(' · ')[0],link=item.querySelector('a');
+        const time=document.createElement('time');time.dateTime=date;time.textContent=date;
+        item.replaceChildren(time,link);link.insertAdjacentHTML('beforeend','<span aria-hidden="true">↗</span>');
+      }
+    }
+  }
+  if(P.directories[path.slice(1)]){
+    view.classList.add('directory-document');
+    if(path==='/life/Travel'){
+      view.classList.add('travel-directory');
+      for(const link of view.querySelectorAll('tbody a'))link.textContent=link.textContent.replace(/\.md$/,'');
+    }
+  }
+}
+let navigationSignature='';
+function syncNavigation(){
+  const core=liveCore(),root=$('#file-nav');
+  const paths=Object.keys(core.nodes).filter(p=>p!=='/'&&!p.split('/').some(part=>part.startsWith('.')));
+  const signature=paths.map(p=>p+':'+core.nodes[p].type).sort().join('|');
+  if(signature===navigationSignature)return;
+  const states=new Map([...root.querySelectorAll('details')].map(el=>[el.dataset.folder,el.open]));
+  navigationSignature=signature;root.replaceChildren();
+  function append(parent,path){
+    const node=core.nodes[path],name=path.split('/').pop();
+    if(node.type==='dir'){
+      const key=path.slice(1),config=P.directories[key],folder=document.createElement('details');folder.className='nav-folder';folder.dataset.folder=key;
+      folder.open=states.get(key)??!config?.collapsed;
+      const children=directoryChildren(path);
+      const summary=document.createElement('summary');
+      summary.innerHTML=`<span class="folder-chevron">›</span>${icon('folder')}<a class="folder-label" data-doc="${E(path)}" href="#${encodeURI(key)}">${E(name)}</a><small${key==='blog'?' id="blog-count"':''}>${children.length}</small>`;
+      const box=document.createElement('div');box.className='folder-children';
+      for(const child of children)append(box,child);
+      folder.append(summary,box);parent.append(folder);
+    }else{
+      const button=document.createElement('button');button.type='button';button.className='file-item';button.dataset.doc=path===HOME+'about.md'?'about':path===HOME+'skills.json'?'skills':path;
+      button.innerHTML=`<span class="file-glyph${path.endsWith('.json')?' json':''}">${path.endsWith('.json')?'{ }':'M↓'}</span><span>${E(name)}</span>`;
+      parent.append(button);
+    }
+  }
+  const top=core.children(HOME,false),order=P.navigation.map(name=>HOME+name);
+  for(const path of [...order.filter(p=>top.includes(p)),...top.filter(p=>!order.includes(p))])append(root,path);
 }
 function setRoute(path){
   try{window.history.replaceState(null,'','#'+encodeURI(window.ICEY_ROUTES.routeForPath(path,shell.state.nodes)));}catch(e){}
-}
-function syncBlogNavigation(){
-  const core=liveCore(),children=core.children(HOME+'blog',false);
-  const box=$('[data-folder="blog"] .folder-children');
-  $('#blog-count').textContent=children.length;
-  const existing=[...box.querySelectorAll('[data-doc]')].map(el=>el.dataset.doc);
-  if(existing.length===children.length&&existing.every((path,i)=>path===children[i]))return;
-  box.replaceChildren();
-  for(const path of children){
-    const button=document.createElement('button');button.type='button';button.className='file-item';button.dataset.doc=path;
-    const active=path===current.path;button.classList.toggle('active',active);button.setAttribute('aria-current',active?'page':'false');
-    const glyph=document.createElement('span');glyph.className='file-glyph';
-    if(core.nodes[path].type==='dir')glyph.innerHTML=icon('folder');else glyph.textContent=path.endsWith('.md')?'M↓':path.endsWith('.json')?'{ }':'·';
-    const label=document.createElement('span');label.textContent=path.split('/').pop();
-    button.append(glyph,label);box.append(button);
-  }
 }
 function renderDocument(preserveScroll=false){
   const core=liveCore(),node=core.nodes[current.path];if(!node)throw new Error('文件已不存在：'+prettyPath(current.path));
@@ -117,9 +194,10 @@ function renderDocument(preserveScroll=false){
   $('#document-pane').setAttribute('aria-label',node.type==='dir'?'目录浏览':'文件预览');
   const isMd=current.path.endsWith('.md')||node.type==='dir',isJson=current.path.endsWith('.json');
   const name=(current.path.split('/').pop()||'/')+(node.type==='dir'?'/':'');
+  const transition=interactionMotion.beforeRender(view,current.mode==='preview'&&!preserveScroll);
   view.replaceChildren();view.className='markdown-body';
   if(current.mode==='source') {view.classList.add('source-view');view.append(renderSource(current.source));}
-  else if(isMd){view.append(renderMarkdown(current.source));}
+  else if(isMd){view.append(renderMarkdown(current.source));decorateDocument(view,current.path);if(node.type==='dir')categoryControls(view,current.path);}
   else {view.classList.add('source-view');view.append(renderSource(current.source,isJson));}
   $('#doc-tab-label').textContent=name;$('#tab-glyph').textContent=isJson?'{ }':node.type==='dir'?'▱':'M↓';
   $('#doc-language').textContent=node.type==='dir'?'Directory':isJson?'JSON':isMd?'Markdown':'Text';
@@ -128,9 +206,11 @@ function renderDocument(preserveScroll=false){
   $('#preview-button').setAttribute('aria-pressed',String(current.mode==='preview'));$('#source-button').setAttribute('aria-pressed',String(current.mode==='source'));
   $('#preview-button').textContent=isJson?'高亮':node.type==='dir'?'目录':'预览';
   $('#source-button').disabled=node.type==='dir';
-  syncBlogNavigation();
-  document.querySelectorAll('#file-nav [data-doc]').forEach(el=>{const active=(docPaths[el.dataset.doc]||el.dataset.doc)===current.path;el.classList.toggle('active',active);el.setAttribute('aria-current',active?'page':'false');if(active&&el.closest('details'))el.closest('details').open=true;});
+  syncNavigation();
+  document.querySelectorAll('#file-nav [data-doc]').forEach(el=>{const active=(docPaths[el.dataset.doc]||el.dataset.doc)===current.path;el.classList.toggle('active',active);el.setAttribute('aria-current',active?'page':'false');if(active){let folder=el.parentElement.closest('details');while(folder){folder.open=true;folder=folder.parentElement.closest('details');}}});
+  if(!preserveScroll)$('#file-nav [aria-current="page"]')?.scrollIntoView({block:'nearest'});
   if(preserveScroll){sc.scrollTop=oldY;sc.scrollLeft=oldX;}else{sc.scrollTop=0;sc.scrollLeft=0;}
+  interactionMotion.afterRender(view,transition);
   document.title=`${name} — icey / 张一铭`;
 }
 function openFile(path,mode='preview',hash=true){
@@ -149,7 +229,8 @@ function status(code=0){
 function helpText(){return `icey websh
 
 浏览文档
-  about / life / skills
+  about / activity / life / skills
+  notes [article]
   blog [article]
   projects [name]
     ${P.projects.map(x=>x.slug).join(" / ")}

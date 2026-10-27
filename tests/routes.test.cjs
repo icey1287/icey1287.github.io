@@ -15,7 +15,7 @@ test('Every published document and directory has a reversible short route',()=>{
     assert.equal(pathForRoute(route,nodes),path);
   }
   assert.equal(routeForPath('/blog/2026.10.7.md',nodes),'blog/2026.10.7');
-  assert.equal(routeForPath('/life.md',nodes),'life');
+  assert.equal(routeForPath('/life',nodes),'life');
   assert.equal(routeForPath('/projects/feynman-s-cat.md',nodes),'projects/feynman-s-cat');
 });
 test('Old absolute bookmarks resolve to the same documents',()=>{
@@ -32,5 +32,5 @@ test('Routes work after navigating the shell to a different folder',async()=>{
   await shell.execute('cd projects');
   const path=pathForRoute('blog/2026.10.7',nodes);
   assert.match(shell.file(path),/^# 当代码越来越容易生成/);
-  assert.equal(pathForRoute('life',nodes),'/life.md');
+  assert.equal(pathForRoute('life',nodes),'/life');
 });

@@ -29,5 +29,83 @@
       "name": "Feynman's Cat",
       "subtitle": "用自己的话教会 AI 猫咪的费曼学习应用"
     }
-  ]
+  ],
+  "navigation": [
+    "about.md",
+    "空间动态.md",
+    "life",
+    "Notes",
+    "blog",
+    "projects",
+    "skills.json"
+  ],
+  "directories": {
+    "life": {
+      "title": "代码之外",
+      "order": [
+        "概览.md",
+        "Travel"
+      ]
+    },
+    "life/Travel": {
+      "title": "Travel",
+      "collapsed": true
+    },
+    "Notes": {
+      "title": "Notes",
+      "categories": [
+        "产品研究",
+        "课程笔记",
+        "行业资料"
+      ]
+    },
+    "blog": {
+      "title": "Blog",
+      "categories": [
+        "生活反思",
+        "科技文章",
+        "读书后记"
+      ]
+    },
+    "projects": {
+      "title": "开源与个人项目",
+      "description": "从 Agent 系统、模型训练，到学习工具和生活里的小项目。"
+    }
+  },
+  "articles": {
+    "blog/2026.10.7.md": {
+      "category": "科技文章"
+    }
+  },
+  "travelDates": {
+    "life/Travel/上海.md": "2025.01",
+    "life/Travel/云南·丽江.md": "2026.06",
+    "life/Travel/云南·大理.md": "2026.06",
+    "life/Travel/云南·昆明.md": "2026.07",
+    "life/Travel/云南·香格里拉.md": "2026.06",
+    "life/Travel/内蒙古·呼和浩特.md": "2026.04",
+    "life/Travel/内蒙古·达拉特旗.md": "2026.04",
+    "life/Travel/北京.md": "2024.06",
+    "life/Travel/吉林·延吉.md": "2023.04",
+    "life/Travel/吉林·长春.md": "2022.08",
+    "life/Travel/四川·成都.md": "2024.01",
+    "life/Travel/广东·广州.md": "2025.02",
+    "life/Travel/广东·深圳.md": "2025.07",
+    "life/Travel/广东·珠海.md": "2025.02",
+    "life/Travel/江苏·南京.md": "2025.01",
+    "life/Travel/浙江·杭州.md": "2024.02",
+    "life/Travel/海南·海口.md": "2024.01",
+    "life/Travel/湖北·武汉.md": "2024.01",
+    "life/Travel/澳门.md": "2026.07",
+    "life/Travel/贵州·兴义.md": "2026.07",
+    "life/Travel/贵州·安顺.md": "2026.07",
+    "life/Travel/贵州·织金.md": "2026.07",
+    "life/Travel/贵州·贵阳.md": "2026.07",
+    "life/Travel/辽宁·兴城.md": "2024.09",
+    "life/Travel/辽宁·大连.md": "2024.08",
+    "life/Travel/辽宁·沈阳.md": "2024.08",
+    "life/Travel/陕西·西安.md": "2026.06",
+    "life/Travel/香港.md": "2026.07",
+    "life/Travel/黑龙江·哈尔滨.md": "2023.05"
+  }
 }

@@ -1,6 +1,6 @@
 /* Public routes are relative to the site root, independently of the shell cwd. */
 (function(root){
-  const aliases={about:'/about.md',bio:'/about.md',life:'/life.md',skills:'/skills.json',blog:'/blog',projects:'/projects'};
+  const aliases={about:'/about.md',bio:'/about.md',life:'/life',notes:'/Notes',activity:'/空间动态.md',skills:'/skills.json',blog:'/blog',projects:'/projects'};
   function routeForPath(path,nodes){
     if(path==='/')return '/';
     const alias=Object.keys(aliases).find(key=>aliases[key]===path);

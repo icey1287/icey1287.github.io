@@ -15,10 +15,10 @@ with sync_playwright() as p:
   js('ICEY_APP.terminal.focus(true)');page.keyboard.type('echo real-keyboard',delay=12);page.keyboard.press('Enter');idle()
   check('Per-key physical typing, no duplication',js('ICEY_APP.terminal.snapshot().includes("\\nreal-keyboard\\n")'))
   # Sample the actual native cursor pixels across its blink cycle.
-  page.wait_for_timeout(180);cursor=page.locator('.xterm-cursor').last
+  page.wait_for_timeout(180);cursor_box=page.locator('.xterm-cursor').last.bounding_box()
   hashes=[]
   for i in range(9):
-   hashes.append(hashlib.sha256(cursor.screenshot()).hexdigest());page.wait_for_timeout(140)
+   hashes.append(hashlib.sha256(page.screenshot(clip=cursor_box)).hexdigest());page.wait_for_timeout(140)
   check('Post-command cursor pixels actually blink',len(set(hashes))>1)
   # No animation: a dispatched wheel delta reaches the viewport in the same task.
   js("ICEY_APP.run('seq 1 120')");js('ICEY_APP.terminal.term.scrollToBottom()');page.wait_for_timeout(80)

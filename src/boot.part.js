@@ -67,8 +67,8 @@ document.addEventListener('keydown',e=>{
 });
 function loadRoute(){let h='';try{h=decodeURI(location.hash.slice(1));}catch(e){}try{openDoc(h||'about',false);}catch(e){openDoc('about',false);}setRoute(current.path);}
 window.addEventListener('hashchange',loadRoute);
-window.addEventListener('beforeunload',()=>{shell.dispose();consoleShell.dispose();stopEffect();});
-icons();$('#sidebar-cat').innerHTML=pixelCat();theme(document.documentElement.dataset.theme||'light');loadRoute();updateDivider();
+window.addEventListener('beforeunload',()=>{shell.dispose();consoleShell.dispose();stopEffect();interactionMotion.dispose();});
+interactionMotion.init();icons();$('#sidebar-cat').innerHTML=pixelCat();theme(document.documentElement.dataset.theme||'light');loadRoute();updateDivider();
 if(!/Mac|iPhone|iPad/.test(navigator.platform))$('.palette-trigger kbd').textContent='Ctrl ⇧ P';
 consoleShell.ready.then(()=>focusInput());
 window.ICEY_APP={run,openDoc,openFile,shell,files,profile:P,renderMarkdown,setShellHeight,terminal:consoleShell,

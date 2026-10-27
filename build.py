@@ -3,40 +3,58 @@
 from pathlib import Path
 import json
 import re
-import html
+import subprocess
 
 ROOT = Path(__file__).resolve().parent
 CONTENT = ROOT / 'content'
 MANIFEST = json.loads((CONTENT / 'manifest.json').read_text(encoding='utf-8'))
+
+def activity_markdown(files):
+    """Content dates come from Git, independently of build or checkout times."""
+    sections = {'KNOWLEDGE_UPDATES': [], 'SPACE_UPDATES': []}
+    for path, text in files.items():
+        if not text.strip() or not path.endswith('.md'):
+            continue
+        if path.startswith(('Notes/', 'blog/')):
+            section = 'KNOWLEDGE_UPDATES'
+        elif path.startswith(('projects/', 'life/Travel/')):
+            section = 'SPACE_UPDATES'
+        else:
+            continue
+        date = subprocess.check_output(
+            ['git', 'log', '-1', '--format=%cs', '--', 'content/' + path], cwd=ROOT, text=True).strip()
+        if not date:
+            continue
+        heading = re.search(r'^# (.+)$', text, re.M)
+        title = heading.group(1) if heading else Path(path).stem
+        sections[section].append((date, path, title))
+    source = files['空间动态.md']
+    for name, entries in sections.items():
+        entries.sort(key=lambda entry: entry[1])
+        entries.sort(key=lambda entry: entry[0], reverse=True)
+        rows = [f'- {date} · [{title}](#{path[:-3]})' for date, path, title in entries[:8]]
+        source = source.replace(f'<!-- {name} -->', '\n'.join(rows))
+    return source
 
 def main():
     # Decode bytes directly to preserve the uploaded Markdown's exact line endings.
     files = {p.relative_to(CONTENT).as_posix(): p.read_bytes().decode('utf-8')
              for p in sorted(CONTENT.rglob('*'))
              if p.is_file() and p.name != 'manifest.json' and p.suffix in ('.md', '.json')}
-    (CONTENT / 'blog').mkdir(exist_ok=True)
+    files['空间动态.md'] = activity_markdown(files)
     template = (ROOT / 'src/profile.template.js').read_text(encoding='utf-8')
     profile = template.replace('/*__MANIFEST__*/', json.dumps(MANIFEST, ensure_ascii=False, indent=2))
     profile = profile.replace('/*__CONTENT__*/', json.dumps(files, ensure_ascii=False, indent=2))
     (ROOT / 'src/profile.js').write_text(profile, encoding='utf-8')
-    parts = ['app-head.js','icons.js','routes.js','documents.part.js','eggs.part.js','effects.part.js',
+    parts = ['app-head.js','icons.js','routes.js','motion.part.js','documents.part.js','eggs.part.js','effects.part.js',
              'commands.part.js','input.part.js','boot.part.js']
     app = '\n'.join((ROOT / 'src' / name).read_text(encoding='utf-8') for name in parts)
     (ROOT / 'src/app.js').write_text(app, encoding='utf-8')
     content = (ROOT / 'src/template.html').read_text(encoding='utf-8')
-    rows = []
     for item in MANIFEST['projects']:
         slug = item['slug']
         if not re.fullmatch('[a-z0-9-]+', slug) or f'projects/{slug}.md' not in files:
             raise ValueError(f'Invalid or missing project: {slug}')
-        rows.append(f'            <button class="file-item" type="button" data-doc="projects/{slug}">'
-                    f'<span class="file-glyph">M↓</span><span>{html.escape(slug)}.md</span></button>')
-    content = content.replace('/*__PROJECT_COUNT__*/', str(len(rows))).replace('/*__PROJECT_NAV__*/', '\n'.join(rows))
-    articles = [name for name in files if name.startswith('blog/') and '/' not in name[5:]]
-    rows = [f'            <button class="file-item" type="button" data-doc="/{html.escape(name, quote=True)}">'
-            f'<span class="file-glyph">M↓</span><span>{html.escape(name[5:])}</span></button>'
-            for name in articles]
-    content = content.replace('/*__BLOG_COUNT__*/', str(len(rows))).replace('/*__BLOG_NAV__*/', '\n'.join(rows))
     for marker, path in [('STYLE','src/style.css'),('XTERM_CSS','vendor/xterm.css'),
                          ('MARKED','vendor/marked.js'),('XTERM','vendor/xterm.js'),
                          ('PROFILE','src/profile.js'),('SHELL','src/shell.js'),('APP','src/app.js')]:

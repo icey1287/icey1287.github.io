@@ -32,7 +32,7 @@ function incomplete(source){
 }
 function singleCommand(line){try{const tokens=liveCore().lex(line);if(tokens.some(t=>t.op))return null;return tokens.flatMap(t=>liveCore().expand(t,false));}catch(e){return null;}}
 function refreshDocument(){
-  syncBlogNavigation();
+  syncNavigation();
   if(current.type==='dir'){renderDocument(true);return;}
   if(current.type==='file'&&shell.state.nodes[current.path]?.text!==current.source){
     if(shell.state.nodes[current.path])renderDocument(true);else openDoc('about');
@@ -41,11 +41,11 @@ function refreshDocument(){
 async function dispatch(source,io){
   const line=scriptText(source).trim(),args=singleCommand(line),cmd=args?.[0],a=args?.slice(1)||[];
   let result={out:'',code:0};
-  if(['about','bio','blog','projects','skills','life'].includes(cmd)){
-    if(a.length>1||a.length&&!['projects','blog'].includes(cmd))throw new Error('Usage: '+cmd+(['projects','blog'].includes(cmd)?' [section]':''));
-    const key=cmd+(a[0]?'/'+a[0].replace(/\.md$/,''):'');
-    const path=docPaths[key]||(cmd==='blog'&&a[0]?HOME+'blog/'+a[0].replace(/\.md$/,'')+'.md':null);
-    if(!path)throw new Error('No such section: '+key);
+  if(['about','bio','blog','projects','skills','life','notes','activity'].includes(cmd)){
+    const sections=['projects','blog','notes','life'];
+    if(a.length>1||a.length&&!sections.includes(cmd))throw new Error('Usage: '+cmd+(sections.includes(cmd)?' [section]':''));
+    const base=docPaths[cmd];
+    const path=a.length?window.ICEY_ROUTES.pathForRoute(base+'/'+a[0],shell.state.nodes):base;
     result.out='→ '+prettyPath(openFile(path))+'\n';
   }else if(['preview','view','source','open'].includes(cmd)){
     if(a.length>1||!a.length&&cmd!=='source')throw new Error('Usage: '+cmd+' <file>');

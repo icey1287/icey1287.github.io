@@ -9,7 +9,7 @@ class ShellCore {
   constructor(files, snapshot) {
     this.env = { HOME:'/', USER:'visitor', SHELL:'icey-web-shell', TERM:'xterm-256color', LANG:'zh_CN.UTF-8', PATH:'', PWD:'/' };
     this.cwd = '/'; this.last = 0; this.nodes = {};
-    this.commands = ('help ls ll pwd cd cat head tail grep wc sort uniq cut find tree echo printf touch mkdir rmdir rm cp mv date uname whoami id env export unset which type basename dirname true false sleep clear history about bio blog projects skills life neofetch fortune mew cowsay coffee sl matrix piano open preview view source man achievements resetfs seq less demo exit').split(' ');
+    this.commands = ('help ls ll pwd cd cat head tail grep wc sort uniq cut find tree echo printf touch mkdir rmdir rm cp mv date uname whoami id env export unset which type basename dirname true false sleep clear history about bio blog notes activity projects skills life neofetch fortune mew cowsay coffee sl matrix piano open preview view source man achievements resetfs seq less demo exit').split(' ');
     if (snapshot) { this.nodes=snapshot.nodes; this.cwd=snapshot.cwd; this.env=snapshot.env; this.last=snapshot.last; return; }
     // The site content is the filesystem root; no synthetic OS directories.
     this.nodes['/']={type:'dir',protected:true};
@@ -115,10 +115,10 @@ class ShellCore {
     if(!a.length)return this.result();
     let cmd=a.shift();
     const singleAliases={bio:'about',ll:'ls'};if(cmd==='ll')a.unshift('-al');cmd=singleAliases[cmd]||cmd;
-    const aliases={about:'about.md',skills:'skills.json',life:'life.md'};
+    const aliases={about:'about.md',skills:'skills.json',activity:'空间动态.md'};
     if(aliases[cmd])return this.result(this.file('/'+aliases[cmd]));
-    if(cmd==='projects'||cmd==='blog'){
-      const dir='/'+cmd;
+    if(['projects','blog','notes','life'].includes(cmd)){
+      const dir='/'+(cmd==='notes'?'Notes':cmd);
       if(a.length>1)this.fail(cmd+': expected zero or one section name');
       if(a.length)return this.result(this.file(dir+'/'+a[0].replace(/\.md$/,'')+'.md'));
       return this.result(this.children(dir).filter(p=>p.endsWith('.md')).map(p=>this.file(p)).join('\n'));
