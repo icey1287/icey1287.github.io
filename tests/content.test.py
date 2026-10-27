@@ -1,6 +1,6 @@
 """Content/navigation checks for the current revision, using the built HTML."""
 from pathlib import Path
-import json,os,re,traceback
+import json,os,re,subprocess,traceback
 from playwright.sync_api import sync_playwright
 R=Path(__file__).resolve().parents[1]
 results=[];errors=[]
@@ -85,7 +85,7 @@ with sync_playwright() as p:
         travel_dates=json.loads((R/'content/manifest.json').read_text())['travelDates']
         check('All 29 travel files keep titles without inline dates',len(travel_files)==29 and all(p.read_text().startswith('# '+p.stem+'\n') and '时间：' not in p.read_text() for p in travel_files))
         check('Travel dates live in the manifest',len(travel_dates)==29 and all(re.fullmatch(r'\d{4}\.\d{2}',travel_dates[p.relative_to(R/'content').as_posix()]) for p in travel_files))
-        check('Overview links to every travel location',page.locator('#doc-view a[href^="#life/Travel/"]').count()==29)
+        check('Overview links to Travel without repeating its locations',page.locator('#doc-view a[href="#life/Travel"]').count()==1 and page.locator('#doc-view a[href^="#life/Travel/"]').count()==0)
         run('life Travel')
         months=page.locator('#doc-view h2').all_text_contents()
         check('Travel month groups are newest first',months==sorted(set(travel_dates.values()),reverse=True))
@@ -127,7 +127,8 @@ with sync_playwright() as p:
         run('activity')
         check('Activity has four real directory entrances',page.locator('.entry-grid a').count()==4)
         check('Generated activity matches Shell source',js('ICEY_APP.current.source===ICEY_APP.shell.core.file("/空间动态.md")'))
-        check('Activity shows committed dates and excludes uncommitted travel files',page.locator('.update-list time').count()==6 and page.locator('.update-list a[href^="#life/Travel/"]').count()==0)
+        updates=js('''()=>[...document.querySelectorAll('.update-list li')].map(item=>({date:item.querySelector('time').dateTime,path:decodeURI(item.querySelector('a').hash.slice(1))+'.md'}))''')
+        check('Activity dates match committed content history',bool(updates) and all(item['date']==subprocess.check_output(['git','log','-1','--format=%cs','--','content/'+item['path']],cwd=R,text=True).strip() for item in updates))
         generated=js('ICEY_APP.current.source')
         page.locator('#source-button').click()
         check('Activity source mode uses the same generated Markdown',js('ICEY_APP.current.source')==generated)

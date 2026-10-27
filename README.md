@@ -61,7 +61,7 @@ python3 build.py
 
 Notes 分类为「产品研究、课程笔记、行业资料」，blog 分类为「生活反思、科技文章、读书后记」。目录页显示分类筛选与数量。新文章尚未登记分类时仍出现在「全部」。`directories` 中声明的目录即使没有文件也会出现在侧栏和 Shell 中，无需占位文件。
 
-`life/概览.md` 保留按年份、月份组织的旅行链接、钢琴与独立游戏记录；`life/Travel/` 的地点 Markdown 保存地点名与正文，旅行年月集中登记在 `manifest.json` 的 `travelDates` 中（例如 `"life/Travel/香港.md": "2026.07"`）。Travel 目录按年月分组，目录与侧栏均按旅行年月倒序排列，同月按地点名称排序；未登记年月的地点排在末尾。`life` 打开目录，`life 概览` 打开概览。
+`life/概览.md` 保留 Travel 简介与目录入口、钢琴与独立游戏记录；`life/Travel/` 的地点 Markdown 保存地点名与正文，旅行年月集中登记在 `manifest.json` 的 `travelDates` 中（例如 `"life/Travel/香港.md": "2026.07"`）。Travel 目录按年月分组，目录与侧栏均按旅行年月倒序排列，同月按地点名称排序；未登记年月的地点排在末尾。`life` 打开目录，`life 概览` 打开概览。
 
 「空间动态」的两段更新列表由构建填入源文件的标记位置，并作为同一份 Markdown 提供给预览、源码和 Shell。知识更新收录 Notes/blog，空间更新收录项目和有正文的旅行文件；各取最近八条，以 Git 最后提交日期排序。空文件和未提交的新文件不进入列表，样式修改不会刷新内容日期。构建使用 Git 历史，CI checkout 应设置 `fetch-depth: 0`。
 
