@@ -138,7 +138,7 @@ function categoryControls(view,path){
   }
 }
 function decorateDocument(view,path){
-  if(path.startsWith('/life/Travel/')&&view.querySelector('img')){
+  if((path.startsWith('/life/Travel/')||path==='/life/概览.md')&&view.querySelector('img')){
     view.classList.add('travel-document');
     const gallery=document.createElement('div');gallery.className='travel-gallery';
     gallery.setAttribute('role','group');gallery.setAttribute('aria-label','旅行相册');

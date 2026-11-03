@@ -112,6 +112,18 @@
     "life/Travel/黑龙江·哈尔滨.md": "2023.05"
   },
   "travelPhotos": {
+    "assets/travel/overview/china-travel-map.webp": {
+      "width": 2268,
+      "height": 2268
+    },
+    "assets/travel/overview/flight-routes.webp": {
+      "width": 1566,
+      "height": 724
+    },
+    "assets/travel/overview/train-journeys.webp": {
+      "width": 1264,
+      "height": 2736
+    },
     "assets/travel/dali/img_20260701_121522.webp": {
       "width": 1920,
       "height": 1440
