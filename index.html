@@ -4142,8 +4142,8 @@ function pixelCat(){return `<svg class="pixel-cat" viewBox="0 0 32 30" fill="cur
 const interactionMotion=(()=>{
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const events=new AbortController();
-  let canvas,ctx,frame=0,trail=[],ripples=[],card=null;
-  let ink='',pageAnimations=[],ghost=null;
+  let canvas,ctx,frame=0,trail=[],blooms=[],card=null;
+  let ink='',accent='',paletteTheme,leafSpacing=0,leafIndex=0,pageAnimations=[],ghost=null;
   const cards='.entry-grid a,.article-directory tbody tr,.travel-directory tbody tr';
   function cancelPage(){
     for(const animation of pageAnimations)animation.cancel();
@@ -4156,7 +4156,7 @@ const interactionMotion=(()=>{
     card=null;
   }
   function stopPointer(){
-    cancelAnimationFrame(frame);frame=0;trail=[];ripples=[];
+    cancelAnimationFrame(frame);frame=0;trail=[];blooms=[];leafSpacing=0;leafIndex=0;
     ctx?.clearRect(0,0,innerWidth,innerHeight);resetCard();
   }
   function resize(){
@@ -4165,24 +4165,57 @@ const interactionMotion=(()=>{
     ctx.setTransform(scale,0,0,scale,0,0);stopPointer();
   }
   function wake(){if(!frame)frame=requestAnimationFrame(draw);}
+  function syncPalette(){
+    const theme=document.documentElement.dataset.theme||'light';
+    if(theme===paletteTheme)return;
+    const style=getComputedStyle(document.documentElement);
+    ink=style.getPropertyValue('--green').trim();accent=style.getPropertyValue('--orange').trim();
+    paletteTheme=theme;
+  }
+  // A pointed, slightly asymmetric leaf in local coordinates, rooted at (x,y).
+  function leaf(x,y,angle,length,width,color){
+    ctx.save();ctx.translate(x,y);ctx.rotate(angle);ctx.fillStyle=color;
+    ctx.beginPath();ctx.moveTo(0,0);
+    ctx.quadraticCurveTo(length*.32,-width,length,0);
+    ctx.quadraticCurveTo(length*.55,width*.82,0,0);ctx.fill();ctx.restore();
+  }
   function draw(now){
-    frame=0;ctx.clearRect(0,0,innerWidth,innerHeight);
-    trail=trail.filter(point=>now-point.time<160);
+    frame=0;ctx.clearRect(0,0,innerWidth,innerHeight);syncPalette();
+    trail=trail.filter(point=>now-point.time<330);
     ctx.strokeStyle=ink;ctx.fillStyle=ink;ctx.lineWidth=1;ctx.lineCap='round';
     for(let i=0;i<trail.length;i++){
-      const point=trail[i],life=1-(now-point.time)/160;
-      ctx.globalAlpha=.16*life*point.strength;
-      if(i){ctx.beginPath();ctx.moveTo(trail[i-1].x,trail[i-1].y);ctx.lineTo(point.x,point.y);ctx.stroke();}
-      ctx.beginPath();ctx.arc(point.x,point.y,life,0,Math.PI*2);ctx.fill();
+      const point=trail[i],life=Math.min(1,1-(now-point.time)/330);
+      ctx.globalAlpha=.38*life*point.strength;
+      if(i&&point.join){
+        ctx.beginPath();ctx.moveTo(trail[i-1].x,trail[i-1].y);ctx.lineTo(point.x,point.y);ctx.stroke();
+      }
+      if(point.leaf){
+        ctx.globalAlpha=.78*life*point.strength;
+        leaf(point.x,point.y,point.angle,(6+3*life),3.4,point.warm?accent:ink);
+      }
     }
-    ripples=ripples.filter(ripple=>now-ripple.time<380);
-    for(const ripple of ripples){
-      const progress=(now-ripple.time)/380,radius=8+46*(1-(1-progress)**3);
-      ctx.globalAlpha=.24*(1-progress)**2;ctx.strokeStyle=ink;ctx.lineWidth=1;
-      ctx.beginPath();ctx.arc(ripple.x,ripple.y,radius,0,Math.PI*2);ctx.stroke();
+    const tip=trail.at(-1);
+    if(tip){
+      ctx.globalAlpha=.65*tip.strength*Math.min(1,1-(now-tip.time)/330);
+      ctx.beginPath();ctx.arc(tip.x,tip.y,1.4,0,Math.PI*2);ctx.fill();
+    }
+    blooms=blooms.filter(bloom=>now-bloom.time<460);
+    for(const bloom of blooms){
+      const progress=Math.max(0,(now-bloom.time)/460),open=1-(1-progress)**3;
+      for(let i=0;i<6;i++){
+        const angle=bloom.angle+i*Math.PI/3+.18*open;
+        const radius=(i%2?15:22)*open+2;
+        ctx.globalAlpha=(1-progress)**1.4*bloom.strength;
+        leaf(bloom.x+Math.cos(angle)*radius,bloom.y+Math.sin(angle)*radius,
+          angle+.36*open,(i%2?8:12)*(.4+.6*open),i%2?3:4,i%2?accent:ink);
+      }
     }
     ctx.globalAlpha=1;
-    if(trail.length||ripples.length)wake();
+    if(trail.length||blooms.length)wake();
+  }
+  function pointerStrength(target){
+    const reading=target.closest('#doc-view')&&current.type==='file'&&current.path!=='/空间动态.md';
+    return reading||target.closest('.shell-panel,.source-view') ? .36 : 1;
   }
   function move(event){
     if(event.pointerType!=='mouse'||reduced.matches)return;
@@ -4198,20 +4231,31 @@ const interactionMotion=(()=>{
       card.style.setProperty('--shine-y',(y*100).toFixed(1)+'%');
       card.classList.add('is-tracking');
     }
-    const quiet=target.closest('.shell-panel,.source-view')||target.closest('#doc-view')&&current.type==='file'&&current.path!=='/空间动态.md';
-    const now=performance.now();
-    const point={x:event.clientX,y:event.clientY,time:now,strength:quiet ? .28 : 1};
+    const x=event.clientX,y=event.clientY,time=performance.now(),strength=pointerStrength(target);
     const last=trail.at(-1);
-    if(!last||Math.hypot(last.x-point.x,last.y-point.y)>5)trail.push(point);
-    if(trail.length>12)trail.shift();
-    ink=getComputedStyle(document.documentElement).getPropertyValue('--green').trim();wake();
+    const distance=last?Math.hypot(x-last.x,y-last.y):0;
+    const join=last&&time-last.time<120&&distance<140;
+    if(join){
+      if(distance<2)return;
+      const angle=Math.atan2(y-last.y,x-last.x);
+      for(let offset=24-leafSpacing;offset<=distance;offset+=24){
+        const fraction=offset/distance;
+        trail.push({x:last.x+(x-last.x)*fraction,y:last.y+(y-last.y)*fraction,time,strength,join:true,
+          leaf:true,angle:angle+(leafIndex%2?1:-1)*2.4,warm:leafIndex%4===3});
+        leafIndex++;
+      }
+      leafSpacing=(leafSpacing+distance)%24;
+    }else leafSpacing=0;
+    trail.push({x,y,time,strength,join});
+    if(trail.length>96)trail.splice(0,trail.length-96);
+    wake();
   }
   function press(event){
     if(event.pointerType!=='mouse'||event.button!==0||reduced.matches)return;
-    if(!event.target.closest('#file-nav [data-doc],#file-nav summary,.interaction-card,.category-filters button,#doc-view a[href^="#"]'))return;
-    ripples.push({x:event.clientX,y:event.clientY,time:performance.now()});
-    if(ripples.length>4)ripples.shift();
-    ink=getComputedStyle(document.documentElement).getPropertyValue('--green').trim();wake();
+    blooms.push({x:event.clientX,y:event.clientY,time:performance.now(),
+      angle:-Math.PI/2+leafIndex*.4,strength:pointerStrength(event.target)});
+    if(blooms.length>4)blooms.shift();
+    wake();
   }
   function animate(element,keyframes,options){
     const animation=element.animate(keyframes,options);pageAnimations.push(animation);
