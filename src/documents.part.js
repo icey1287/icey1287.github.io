@@ -21,17 +21,23 @@ function safeHref(href){
 /* Raw HTML is displayed as text. Remote images never load automatically. */
 const mdRenderer=new marked.Renderer();
 mdRenderer.html=html=>E(html);
-mdRenderer.image=(href,title,text)=>`<span class="image-note">[图片：${E(text||'未命名')} · 不自动加载外部资源]</span>`;
+function travelPhoto(href){
+  if(!/^assets\/travel\/[a-z-]+\/[a-z0-9_-]+\.webp$/.test(href||''))return null;
+  return P.travelPhotos?.[href]||null;
+}
+mdRenderer.image=(href,title,text)=>travelPhoto(href)
+  ? `<img src="${E(href)}" alt="${E(text||'旅行照片')}">`
+  : `<span class="image-note">[图片：${E(text||'未命名')} · 不自动加载外部资源]</span>`;
 mdRenderer.link=(href,title,text)=>{const safe=safeHref(href);return safe===null?text:`<a href="${E(safe)}"${title?' title="'+E(title)+'"':''}>${text}</a>`;};
 function renderMarkdown(text){
   if(text.length>131072)throw new Error('预览上限为 128 KiB。');
   const template=document.createElement('template');
   template.innerHTML=marked.parse(text,{gfm:true,breaks:false,headerIds:false,mangle:false,renderer:mdRenderer});
   // Keep a small, explicit set of document elements. No script, style, SVG, iframe or event attributes.
-  const allowed=new Set('P BR HR H1 H2 H3 H4 H5 H6 STRONG EM DEL BLOCKQUOTE UL OL LI PRE CODE TABLE THEAD TBODY TR TH TD A SPAN INPUT'.split(' '));
+  const allowed=new Set('P BR HR H1 H2 H3 H4 H5 H6 STRONG EM DEL BLOCKQUOTE UL OL LI PRE CODE TABLE THEAD TBODY TR TH TD A SPAN INPUT IMG'.split(' '));
   const clean=parent=>{for(const el of [...parent.children]){
     if(!allowed.has(el.tagName)){el.replaceWith(document.createTextNode(el.textContent));continue;}
-    const attrs={href:el.getAttribute('href'),title:el.getAttribute('title'),align:el.getAttribute('align'),start:el.getAttribute('start'),class:el.getAttribute('class'),checked:el.hasAttribute('checked'),type:el.getAttribute('type')};
+    const attrs={href:el.getAttribute('href'),src:el.getAttribute('src'),alt:el.getAttribute('alt'),title:el.getAttribute('title'),align:el.getAttribute('align'),start:el.getAttribute('start'),class:el.getAttribute('class'),checked:el.hasAttribute('checked'),type:el.getAttribute('type')};
     for(const attr of [...el.attributes])el.removeAttribute(attr.name);
     if(el.tagName==='A'){
       const url=safeHref(attrs.href);if(url!==null)el.setAttribute('href',url);
@@ -42,6 +48,12 @@ function renderMarkdown(text){
     if(el.tagName==='OL'&&/^\d+$/.test(attrs.start||''))el.setAttribute('start',attrs.start);
     if(el.tagName==='CODE'&&/^language-[\w+-]+$/.test(attrs.class||''))el.className=attrs.class;
     if(el.tagName==='SPAN'&&attrs.class==='image-note')el.className='image-note';
+    if(el.tagName==='IMG'){
+      const photo=travelPhoto(attrs.src);
+      if(!photo){el.remove();continue;}
+      el.src=attrs.src;el.alt=attrs.alt||'旅行照片';
+      el.width=photo.width;el.height=photo.height;el.loading='lazy';el.decoding='async';
+    }
     if(el.tagName==='INPUT'){
       if(attrs.type!=='checkbox'){el.remove();continue;}
       el.type='checkbox';el.disabled=true;el.checked=attrs.checked;el.setAttribute('aria-label',attrs.checked?'已完成':'未完成');
@@ -126,6 +138,20 @@ function categoryControls(view,path){
   }
 }
 function decorateDocument(view,path){
+  if(path.startsWith('/life/Travel/')&&view.querySelector('img')){
+    view.classList.add('travel-document');
+    const gallery=document.createElement('div');gallery.className='travel-gallery';
+    gallery.setAttribute('role','group');gallery.setAttribute('aria-label','旅行相册');
+    const images=[...view.querySelectorAll(':scope > p > img:only-child')];
+    if(images.length)images[0].parentElement.before(gallery);
+    for(const [index,img] of images.entries()){
+      const paragraph=img.parentElement,link=document.createElement('a');
+      link.href=img.getAttribute('src');link.target='_blank';link.rel='noopener';
+      link.setAttribute('aria-label',img.alt+'，在新标签页查看大图');
+      if(index<2)img.loading='eager';
+      img.replaceWith(link);link.append(img);gallery.append(paragraph);
+    }
+  }
   if(path==='/about.md')view.querySelector('a[href="#空间动态"]')?.classList.add('activity-link');
   if(path==='/空间动态.md'){
     view.classList.add('activity-document');

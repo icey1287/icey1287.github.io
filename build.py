@@ -3,6 +3,7 @@
 from pathlib import Path
 import json
 import re
+import shutil
 import subprocess
 
 ROOT = Path(__file__).resolve().parent
@@ -37,6 +38,11 @@ def activity_markdown(files):
     return source
 
 def main():
+    for asset, dimensions in MANIFEST.get('travelPhotos', {}).items():
+        if not re.fullmatch(r'assets/travel/[a-z-]+/[a-z0-9_-]+\.webp', asset) or not (ROOT / asset).is_file():
+            raise ValueError(f'Invalid or missing travel photo: {asset}')
+        if not all(isinstance(dimensions.get(key), int) and dimensions[key] > 0 for key in ('width', 'height')):
+            raise ValueError(f'Invalid travel photo dimensions: {asset}')
     # Decode bytes directly to preserve the uploaded Markdown's exact line endings.
     files = {p.relative_to(CONTENT).as_posix(): p.read_bytes().decode('utf-8')
              for p in sorted(CONTENT.rglob('*'))
@@ -63,6 +69,11 @@ def main():
             source = re.sub(r'</script', r'<\\/script', source, flags=re.I)
         content = content.replace(f'/*__{marker}__*/', source)
     (ROOT / 'index.html').write_text(content, encoding='utf-8')
+    output = ROOT / '_site'
+    output.mkdir(exist_ok=True)
+    shutil.copy2(ROOT / 'index.html', output / 'index.html')
+    if (ROOT / 'assets').exists():
+        shutil.copytree(ROOT / 'assets', output / 'assets', dirs_exist_ok=True)
     print(f'Built {ROOT / "index.html"} ({len(content.encode()):,} bytes)')
 
 if __name__ == '__main__':

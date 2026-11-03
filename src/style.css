@@ -447,6 +447,11 @@ dialog::backdrop{background:#15251866;backdrop-filter:blur(3px)}
 .article-directory td:first-child a{display:block;text-decoration:none;font-size:19px;line-height:1.7;color:var(--text);letter-spacing:-.3px}
 .article-directory td:last-child{font:10px/1.8 var(--mono);color:var(--faint)}
 .article-category{display:inline-block;font:10px var(--sans);padding:3px 8px;background:var(--green-bg);color:var(--green-dark);border-radius:3px;margin-left:13px}
+.travel-gallery{columns:2;column-gap:16px;margin:24px 0}
+.markdown-body .travel-gallery p{break-inside:avoid;margin:0 0 16px}
+.travel-gallery a{display:block;border-radius:6px;overflow:hidden;background:var(--surface-alt);outline-offset:3px}
+.travel-gallery img{display:block;width:100%;height:auto}
+@media(max-width:600px){.travel-gallery{columns:1}}
 .travel-directory h2{font:500 14px/1.5 var(--mono);color:var(--muted);margin:30px 0 12px;padding-bottom:10px}
 .travel-directory .table-scroll{margin:0 0 26px}
 .travel-directory table,.travel-directory tbody{display:block}

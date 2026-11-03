@@ -12,7 +12,7 @@ document.addEventListener('click',e=>{
   const close=e.target.closest('[data-close]');if(close){$('#'+close.dataset.close)?.close();return;}
   const nav=e.target.closest('[data-doc]');if(nav){e.preventDefault();try{openDoc(nav.dataset.doc);}catch(err){toast(err.message);}return;}
   const link=e.target.closest('#doc-view a');if(!link)return;
-  const href=link.getAttribute('href');if(!href||/^(https?:|mailto:)/i.test(href))return;
+  const href=link.getAttribute('href');if(!href||/^(https?:|mailto:)/i.test(href)||travelPhoto(href))return;
   e.preventDefault();
   if(href.startsWith('#')){let anchor=href.slice(1);try{anchor=decodeURI(anchor);}catch(err){}const target=[...$('#doc-view').querySelectorAll('[id]')].find(x=>x.id===anchor||x.id==='md-'+anchor);
     if(target)target.scrollIntoView({block:'start'});else try{openDoc(anchor);}catch(err){toast(err.message);}return;}

@@ -4,7 +4,7 @@
 
 网站地址：https://icey1287.github.io/
 
-提交到 `main` 后，GitHub Actions 会运行 `python3 build.py`、执行 Shell 测试，并将构建生成的 `index.html` 发布到 GitHub Pages。站点只发布构建产物，不发布源码、测试或预览图片。
+提交到 `main` 后，GitHub Actions 会运行 `python3 build.py`、执行 Shell 测试，并将构建生成的 `index.html` 发布到 GitHub Pages。发布目录为 `_site/`，包含构建生成的 `index.html` 和 `assets/` 旅行照片。
 
 GitHub 仓库的 **Settings → Pages → Source** 应选择 **GitHub Actions**。也可以在 **Actions → Build and deploy homepage → Run workflow** 手动发布。
 
@@ -12,9 +12,16 @@ GitHub 仓库的 **Settings → Pages → Source** 应选择 **GitHub Actions**�
 
 ## 本地预览
 
-先运行 `python3 build.py`，再用浏览器打开生成的 `index.html`。
+先构建，再启动包含照片资源的本地预览服务：
 
-HTML、样式、Markdown 内容、终端组件与脚本均已内嵌。
+```sh
+python3 build.py
+python3 -m http.server 4173 --bind 127.0.0.1 --directory _site
+```
+
+在浏览器打开 `http://127.0.0.1:4173/`，预览期间保持服务运行。聊天里的 HTML 文件预览可能无法加载同目录下的照片，请使用这个网页地址。
+
+HTML、样式、Markdown 内容、终端组件与脚本均已内嵌。旅行照片位于 `assets/travel/`，本地预览及发布时须与 `index.html` 一起保留。`python3 build.py` 会将完整站点输出到 `_site/`。
 
 ## 内容维护
 
@@ -46,7 +53,7 @@ content/
 python3 build.py
 ```
 
-重新生成的 `index.html` 就是可分发、可部署的单文件版本。`src/profile.js` 与 `src/app.js` 是构建产物，不要直接维护。
+重新生成的 `_site/` 就是可分发、可部署的完整站点目录。`src/profile.js` 与 `src/app.js` 是构建产物，不要直接维护。
 
 添加项目时，在 `content/projects/` 新建 Markdown，再向 `content/manifest.json` 的 `projects` 数组添加 `slug`、`name` 和 `subtitle`。构建会同步生成导航、数量与项目目录。
 

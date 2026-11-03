@@ -107,5 +107,455 @@
     "life/Travel/陕西·西安.md": "2026.06",
     "life/Travel/香港.md": "2026.07",
     "life/Travel/黑龙江·哈尔滨.md": "2023.05"
+  },
+  "travelPhotos": {
+    "assets/travel/dali/img_20260701_121522.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/dali/img_20260701_144018.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/dali/img_20260701_174836.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/dalian/img_20240805_192720.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/dalian/img_20240805_204700.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/dalian/img_20240806_140214.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/dalian/img_20240806_181921.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/dalian/img_20240806_211701.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/guangzhou/img_20250206_193903.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/guangzhou/img_20250206_200542.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/guangzhou/img_20250206_204312.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/guiyang/img_20260705_191935.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/guiyang/img_20260705_192210.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/guiyang/img_20260705_192257.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/guiyang/img_20260705_193240.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/harbin/agc_20241002_174621049.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/harbin/img_20230501_105833.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/harbin/img_20230501_133803.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/haikou/img_20240119_074248.webp": {
+      "width": 1080,
+      "height": 1920
+    },
+    "assets/travel/haikou/img_20240119_095553.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/haikou/img_20260906_191240.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/haikou/img_20260919_185223.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/haikou/img_20261023_230520.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/hangzhou/img_20240211_121714.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/hangzhou/img_20240212_173035.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/hangzhou/img_20240212_203404.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/hangzhou/img_20240214_123612.webp": {
+      "width": 1080,
+      "height": 1920
+    },
+    "assets/travel/hangzhou/img_20240214_131549.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/hohhot/livephoto_20260826_171543_991.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/hohhot/livephoto_20260826_171544_338.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/hohhot/livephoto_20260826_171545_442.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/lijiang/img_20260628_110454.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/lijiang/img_20260628_112211.webp": {
+      "width": 1536,
+      "height": 1920
+    },
+    "assets/travel/lijiang/img_20260628_153851.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/nanjing/img_20250114_190447.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/nanjing/img_20250116_125138.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/nanjing/img_20250118_145236.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/nanjing/img_20250118_173908.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/shanghai/img_20250110_221102.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/shanghai/img_20250110_225055.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/shanghai/img_20250111_082005.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/shanghai/img_20250112_181904.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/shanghai/img_20250112_184123.webp": {
+      "width": 1920,
+      "height": 1442
+    },
+    "assets/travel/shenzhen/img_20250718_191507.webp": {
+      "width": 1920,
+      "height": 1442
+    },
+    "assets/travel/shenzhen/img_20250718_200406.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/shenzhen/img_20250718_225503.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/shenyang/img_20240802_165204.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/shenyang/img_20240804_185538.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/shenyang/img_20240804_185947.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/wuhan/agc_20240116_195801486.webp": {
+      "width": 1920,
+      "height": 1714
+    },
+    "assets/travel/wuhan/agc_20240117_105646741.webp": {
+      "width": 1260,
+      "height": 1920
+    },
+    "assets/travel/wuhan/img_20240117_143419.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/wuhan/img_20240117_170615.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/xian/img_20260627_154746.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/xian/img_20260627_155523.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/hong-kong/img_20260725_203403.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/hong-kong/img_20260725_225430.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/hong-kong/img_20260929_102521.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/hong-kong/img_20260929_130012.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/hong-kong/img_20260929_153523.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/shangri-la/img_20260629_123023.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/shangri-la/img_20260629_151337.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/shangri-la/img_20260629_151649.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/shangri-la/img_20260629_151739.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/shangri-la/img_20260629_161603.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/shangri-la/img_20260629_165226.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/xingyi/img_20260702_161004.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/xingyi/img_20260702_161439.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/xingyi/img_20260702_173144.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/xingyi/img_20260703_110026.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/xingyi/img_20260703_150653.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/yanji/img_20230429_145743.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/yanji/img_20230430_065106.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/yanji/img_20230430_085852.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/yanji/img_20230430_104400.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/changchun/img_20221112_185855.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/changchun/img_20230603_193408.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/changchun/img_20230606_185051.webp": {
+      "width": 1080,
+      "height": 1920
+    },
+    "assets/travel/changchun/img_20260521_185430.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/changchun/img_20260521_200131.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/zhijin/img_20260705_103218.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/zhijin/img_20260705_110353.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/zhijin/img_20260705_143815.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/zhijin/img_20260705_145510.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/zhuhai/agc_20250130_150951516.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/zhuhai/agc_20250130_193002674.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/zhuhai/agc_20250131_170422045.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/zhuhai/agc_20250131_181058208.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/zhuhai/agc_20250131_231307587.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/zhuhai/agc_20250205_124800095.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/zhuhai/img_20250131_163317.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/zhuhai/img_20250201_191014.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/zhuhai/img_20250203_151137.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/anshun/img_20260703_210340.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/anshun/img_20260704_104425.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/anshun/img_20260704_110326.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/macau/img_20260724_121613.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/macau/img_20260724_131544.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/macau/img_20260724_132316.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/macau/img_20260724_153223.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/beijing/agc_20251019_143206659.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/beijing/img_20240713_175047.webp": {
+      "width": 1080,
+      "height": 1920
+    },
+    "assets/travel/beijing/img_20260511_130300.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/beijing/img_20260607_161341.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/beijing/livephoto_20260826_171543_115.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/beijing/mvimg_20260501_191452.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/chengdu/img_20240114_153423.webp": {
+      "width": 1080,
+      "height": 1920
+    },
+    "assets/travel/chengdu/img_20240114_183207.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/chengdu/img_20240115_114137.webp": {
+      "width": 1920,
+      "height": 1080
+    },
+    "assets/travel/dalad/img_0185.webp": {
+      "width": 1920,
+      "height": 1440
+    },
+    "assets/travel/dalad/livephoto_20260826_171544_796.webp": {
+      "width": 1440,
+      "height": 1920
+    },
+    "assets/travel/dalad/mvimg_20260428_094324.webp": {
+      "width": 1440,
+      "height": 1920
+    }
   }
 }
