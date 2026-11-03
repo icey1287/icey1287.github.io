@@ -73,6 +73,9 @@
     }
   },
   "articles": {
+    "blog/2026.11.3.md": {
+      "category": "生活反思"
+    },
     "blog/2026.10.7.md": {
       "category": "科技文章"
     }
